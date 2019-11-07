@@ -64,6 +64,7 @@ app.on('activate', function() {
 
 
 ipcMain.on('app.tsx', (event, arg) => {
+    // https://electronjs.org/docs/api/ipc-main
     const channel = 'app.tsx'
     console.log(arg)
     switch (arg.command) {
@@ -71,10 +72,9 @@ ipcMain.on('app.tsx', (event, arg) => {
             event.reply(channel, { command: '', data: 'processing' })
             break
         case 'editTime':
-            data = JSON.parse(arg.data)
-            console.log(data.hours)
-            console.log(data.minutes)
-            console.log(data.seconds)
+            console.log(arg.data.hours)
+            console.log(arg.data.minutes)
+            console.log(arg.data.seconds)
             event.reply(channel, { command: '', data: 'processing' })
             break
         default:

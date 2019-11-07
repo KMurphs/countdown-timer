@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
 import CurrentTask from './components/CurrentTask/CurrentTask';
-import CountDown from './components/CountDown/CountDown';
-import TaskDetails from './components/TaskDetails/TaskDetails.jsx';
 import './App.css';
 
 
@@ -21,13 +19,21 @@ function App() {
         command: string,
         data: any,
     }
+    let _msg: IMsg = {
+        command: '',
+        data: null
+    }
 
-    const [msg, setMsg] = useState({command: '', data: ''})
+
+
+    const [msg, setMsg] = useState(_msg)
     useEffect(() => {
         // Effect is normally scheduled to be run after each re-render 
         // But will Only re-run the effect if msg changes
         ipcRenderer.send(ipcChannel, msg)
     }, [msg]); 
+
+
 
 
     ipcRenderer.on(ipcChannel, (event: any, arg: IMsg) => {
@@ -38,9 +44,7 @@ function App() {
     return ( 
         <div className = "App">
             <CurrentTask editTask={(value: string)=>setMsg({command: 'editTask', data: value})} 
-                         editTime={(hours: number, minutes: number, seconds: number)=>setMsg({command: 'editTime', data: JSON.stringify({hours: hours, minutes: minutes, seconds: seconds})})}/> 
-            <CountDown/> 
-            <TaskDetails/> 
+                         editTime={(hours: number, minutes: number, seconds: number)=>setMsg({command: 'editTime', data: {hours: hours, minutes: minutes, seconds: seconds}})}/> 
         </div >
     );
 }
