@@ -1,10 +1,13 @@
 import React from 'react';
 // import './CountDown.css';
 
+import Timer from '../Timer/Timer';
+
 function CountDown() {
     return ( 
-        <div className = "CountDown">
-            Hello from CountDown
+        <div className = "CountDown">    
+            <Timer></Timer>
+            Hello from CountDown 1
         </div >
     );
 }

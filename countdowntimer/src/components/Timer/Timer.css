@@ -1,0 +1,38 @@
+.Timer {
+    width: 100%;
+    padding: .5em 0;
+    display: flex;
+    justify-content: center;
+    align-items: baseline;
+}
+
+.Timer input {
+    padding: 0.5em;
+}
+
+.CurrentTask .task input {
+    width: 100%;
+}
+
+.Timer input {
+    width: 3em;
+    text-align: center;
+}
+
+.Timer input::-webkit-outer-spin-button,
+.Timer input::-webkit-inner-spin-button {
+    /* https://stackoverflow.com/questions/3790935/can-i-hide-the-html5-number-input-s-spin-box */
+    /* display: none; <- Crashes Chrome on hover */
+    -webkit-appearance: none;
+    margin: 0;
+    /* <-- Apparently some margin are still there even though it's hidden */
+}
+
+.Timer input[type=number] {
+    -moz-appearance: textfield;
+    /* Firefox */
+}
+
+.Timer .time-divider {
+    padding: 0.5em .3em;
+}
