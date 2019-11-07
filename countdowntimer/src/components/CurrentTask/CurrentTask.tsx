@@ -41,6 +41,7 @@ function CurrentTask({editTask, editTime}:
             </div>
 
             <Timer timeObject = {{ hours: timer.hours, minutes: timer.minutes, seconds: timer.seconds }} 
+                   isReadOnly={false}
                    handleChange={(type: TimeValueType, value: number)=>setTimer(type, value)}/> 
 
         </div >

@@ -2,8 +2,20 @@ import React, { useState, useEffect } from 'react';
 
 import CurrentTask from './components/CurrentTask/CurrentTask';
 import CountDown from './components/CountDown/CountDown';
-import TaskDetails from './components/TaskDetails/TaskDetails.jsx';
+import TaskDetails from './components/TaskDetails/TaskDetails';
 import './App.css';
+
+
+interface IMsg{
+    command: string,
+    data: any,
+}
+
+export interface ITimeObject { 
+    hours: number,
+    minutes: number,
+    seconds: number,
+} 
 
 
 declare global {
@@ -17,15 +29,12 @@ let ipcChannel: string = 'app.tsx'
 
 function App() {
 
-    interface IMsg{
-        command: string,
-        data: any,
-    }
 
-    const [msg, setMsg] = useState({command: '', data: ''})
+    const [timeObject, setTimeObject] = useState<ITimeObject>({hours: 0, minutes: 0, seconds: 0})
+    const [msg, setMsg] = useState<IMsg>({command: '', data: ''})
+
+    
     useEffect(() => {
-        // Effect is normally scheduled to be run after each re-render 
-        // But will Only re-run the effect if msg changes
         ipcRenderer.send(ipcChannel, msg)
     }, [msg]); 
 
@@ -37,10 +46,20 @@ function App() {
 
     return ( 
         <div className = "App">
+
             <CurrentTask editTask={(value: string)=>setMsg({command: 'editTask', data: value})} 
-                         editTime={(hours: number, minutes: number, seconds: number)=>setMsg({command: 'editTime', data: JSON.stringify({hours: hours, minutes: minutes, seconds: seconds})})}/> 
-            <CountDown/> 
+                         editTime={(hours: number, minutes: number, seconds: number)=>{
+                             let timeObj: ITimeObject = {hours: hours, minutes: minutes, seconds: seconds}; 
+                             setMsg({command: 'editTime', data: timeObj}); 
+                             setTimeObject(timeObj)}
+                        }/> 
+
+            <CountDown countdownDuration={timeObject} 
+                       onCompleted={(completedTimeStamp: Date)=>setMsg({command: 'countdownCompleted', data: completedTimeStamp})}
+                       /> 
+
             <TaskDetails/> 
+
         </div >
     );
 }

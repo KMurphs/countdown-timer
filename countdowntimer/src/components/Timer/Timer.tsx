@@ -14,8 +14,8 @@ export interface ITimeObject {
   seconds: number,
 } 
 
-function Timer( {timeObject, handleChange}:
-                {timeObject: ITimeObject; handleChange: (type: TimeValueType, newValue: number)=>void}) {
+function Timer( {timeObject, isReadOnly, handleChange}:
+                {timeObject: ITimeObject; isReadOnly: boolean; handleChange: (type: TimeValueType, newValue: number)=>void}) {
     
     const _timeObject = timeObject || {
       hours: 0,
@@ -37,6 +37,7 @@ function Timer( {timeObject, handleChange}:
       <div id="time" className="Timer">
 
         <input type="number" name="hours" placeholder="00" min={min} max={max} 
+               disabled={isReadOnly}
                value={_timeObject.hours === 0 ? '' : padTimeEntity(_timeObject.hours)} 
                onChange={(evt)=>handleChangeAndCoerce(TimeValueType.HOURS, parseInt(evt.target.value))}/>
 
@@ -45,6 +46,7 @@ function Timer( {timeObject, handleChange}:
 
 
         <input type="number" name="minutes" placeholder="00" min={min} max={max}  
+               disabled={isReadOnly}
                value={_timeObject.minutes === 0 ? '' :padTimeEntity(_timeObject.minutes)} 
                onChange={(evt)=>handleChangeAndCoerce(TimeValueType.MINUTES, parseInt(evt.target.value))}/>
 
@@ -53,6 +55,7 @@ function Timer( {timeObject, handleChange}:
 
 
         <input type="number" name="seconds" placeholder="00" min={min} max={max}  
+               disabled={isReadOnly}
                value={_timeObject.seconds === 0 ? '' :padTimeEntity(_timeObject.seconds)} 
                onChange={(evt)=>handleChangeAndCoerce(TimeValueType.SECONDS, parseInt(evt.target.value))}/>
 
