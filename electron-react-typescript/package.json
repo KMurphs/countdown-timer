@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "homepage": "./",
-  "main": "build/electron-starter.js",
+  "main": "build/main.js",
   "dependencies": {
     "@types/jest": "24.0.22",
     "@types/node": "12.12.6",

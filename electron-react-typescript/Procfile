@@ -1,2 +1,2 @@
 react: npm start
-electron: node build/electron-wait-react
+electron: node build/start-electron-on-react-ready
