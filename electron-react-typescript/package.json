@@ -2,6 +2,7 @@
   "name": "electron-react-typescript",
   "version": "0.1.0",
   "private": true,
+  "homepage": "./",
   "main": "src/electron-starter.js",
   "dependencies": {
     "@types/jest": "24.0.22",
