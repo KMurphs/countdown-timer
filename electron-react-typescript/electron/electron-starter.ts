@@ -1,11 +1,11 @@
 // Modules to control application life and create native browser window
-const { app, BrowserWindow, ipcMain } = require('electron')
-const path = require('path')
-const url = require('url');
+import { app, BrowserWindow } from "electron";
+import * as path from "path";
+import * as url from "url";
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
-let mainWindow
+let mainWindow: Electron.BrowserWindow | null;
 
 function createWindow() {
     // Create the browser window.
@@ -13,7 +13,6 @@ function createWindow() {
         width: 800,
         height: 600,
         webPreferences: {
-            preload: path.join(__dirname, 'preload.js'),
             nodeIntegration: true
         }
     })
@@ -21,7 +20,7 @@ function createWindow() {
     // and load the index.html of the app.
     // mainWindow.loadFile('index.html')
     const startUrl = process.env.ELECTRON_START_URL || url.format({
-        pathname: path.join(__dirname, '/../build/index.html'),
+        pathname: path.join(__dirname, '/index.html'),
         protocol: 'file:',
         slashes: true
     });
