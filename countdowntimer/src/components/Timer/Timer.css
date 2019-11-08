@@ -4,6 +4,7 @@
     display: flex;
     justify-content: center;
     align-items: baseline;
+    position: relative;
 }
 
 .Timer input {
@@ -33,6 +34,29 @@
     /* Firefox */
 }
 
+.Timer .time-sign,
 .Timer .time-divider {
     padding: 0.5em .3em;
+}
+
+.Timer .timer-element--visible {
+    opacity: 1;
+    transition: all .6s;
+}
+
+.Timer .timer-element--invisible {
+    right: -10em;
+    position: absolute;
+    opacity: 0;
+    transition: all .6s;
+}
+
+.Timer .time-sign {
+    opacity: 0;
+    transition: all .6s;
+}
+
+.Timer .time-sign--visible {
+    opacity: 1;
+    transition: all .6s;
 }

@@ -12,6 +12,7 @@ interface IMsg{
 }
 
 export interface ITimeObject { 
+    isNeg: boolean,
     hours: number,
     minutes: number,
     seconds: number,
@@ -30,7 +31,7 @@ let ipcChannel: string = 'app.tsx'
 function App() {
 
 
-    const [timeObject, setTimeObject] = useState<ITimeObject>({hours: 0, minutes: 0, seconds: 0})
+    const [timeObject, setTimeObject] = useState<ITimeObject>({isNeg: false, hours: 0, minutes: 0, seconds: 0})
     const [msg, setMsg] = useState<IMsg>({command: '', data: ''})
 
     
@@ -49,7 +50,7 @@ function App() {
 
             <CurrentTask editTask={(value: string)=>setMsg({command: 'editTask', data: value})} 
                          editTime={(hours: number, minutes: number, seconds: number)=>{
-                             let timeObj: ITimeObject = {hours: hours, minutes: minutes, seconds: seconds}; 
+                             let timeObj: ITimeObject = {isNeg: false, hours: hours, minutes: minutes, seconds: seconds}; 
                              setMsg({command: 'editTime', data: timeObj}); 
                              setTimeObject(timeObj)}
                         }/> 

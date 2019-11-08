@@ -8,7 +8,7 @@ function CountDown({countdownDuration, onCompleted}:
                    {countdownDuration: ITimeObject, onCompleted:(completedTimeStamp: Date)=>void}) {
 
 
-    const [timeObject, setTimeObject] = useState<ITimeObject>({hours: 0, minutes: 0, seconds: 0})        
+    const [timeObject, setTimeObject] = useState<ITimeObject>({isNeg: false, hours: 0, minutes: 0, seconds: 0})        
     const [startTime, setStartTime] = useState<number>(0)        
     const [targetTime, setTargetTime] = useState<number>(0)        
     const [pauseTime, setPauseTime] = useState<number>(0)       
@@ -23,11 +23,13 @@ function CountDown({countdownDuration, onCompleted}:
                 let isNegative = remainingMs < 0
                 let minutes = remainingDt.getMinutes()
                 let seconds = remainingDt.getSeconds()
-                let hours = Math.abs(Math.floor((getCountdownDurationInMs(countdownDuration) - Math.abs(remainingMs))/3600000))
+                let hours = Math.abs(Math.floor((getCountdownDurationInMs(countdownDuration) - remainingMs)/3600000))
 
-                console.log(`${isNegative ? hours : hours}:${minutes}:${seconds}`, targetTime, remainingMs, isNegative)
+                console.log(getCountdownDurationInMs(countdownDuration), Math.abs(remainingMs), getCountdownDurationInMs(countdownDuration) - Math.abs(remainingMs), Math.floor((getCountdownDurationInMs(countdownDuration) - Math.abs(remainingMs))/3600000))
+                console.log(`${isNegative ? hours : hours}:${minutes}:${seconds}`, targetTime, remainingMs, isNegative, getCountdownDurationInMs(countdownDuration))
                 setTimeObject({
-                    hours: isNegative ? (-1)*hours : hours,
+                    isNeg: isNegative,
+                    hours: hours,
                     minutes: minutes,
                     seconds: seconds,
                 })
@@ -50,6 +52,7 @@ function CountDown({countdownDuration, onCompleted}:
     }
     const handleStop = ()=>{
         setTimeObject({
+            isNeg: false,
             hours: 0,
             minutes: 0,
             seconds: 0,
@@ -70,7 +73,7 @@ function CountDown({countdownDuration, onCompleted}:
     
     return ( 
         <div className = "CountDown">    
-            <Timer timeObject = {{ hours: timeObject.hours, minutes: timeObject.minutes, seconds: timeObject.seconds }} 
+            <Timer timeObject = {{isTimeNegative: timeObject.isNeg, hours: timeObject.hours, minutes: timeObject.minutes, seconds: timeObject.seconds }} 
                    isReadOnly={true}
                    handleChange={(type: TimeValueType, value: number)=>{}}/>
 

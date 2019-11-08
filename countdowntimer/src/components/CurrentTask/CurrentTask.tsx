@@ -40,7 +40,7 @@ function CurrentTask({editTask, editTime}:
               <input type="text" name="task" placeholder="What do you want to work on" value={task} onChange={(evt)=>setTask(evt.target.value)}/>
             </div>
 
-            <Timer timeObject = {{ hours: timer.hours, minutes: timer.minutes, seconds: timer.seconds }} 
+            <Timer timeObject = {{ isTimeNegative: false, hours: timer.hours, minutes: timer.minutes, seconds: timer.seconds }} 
                    isReadOnly={false}
                    handleChange={(type: TimeValueType, value: number)=>setTimer(type, value)}/> 
 
