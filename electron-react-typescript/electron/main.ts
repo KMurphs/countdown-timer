@@ -1,7 +1,9 @@
 // Modules to control application life and create native browser window
-import { app, BrowserWindow } from "electron";
+import { app, BrowserWindow, Menu } from "electron";
 import * as path from "path";
 import * as url from "url";
+
+import MainMenu from "./menus/MainMenu";
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -37,6 +39,16 @@ function createWindow() {
         // when you should delete the corresponding element.
         mainWindow = null
     })
+	
+	
+    //Build Menu from TEmplate
+    const mainMenu = Menu.buildFromTemplate(new MainMenu({
+		'addItem': (()=>console.log(`Opening Add Item Window`)),
+		'clearItems': (()=>console.log(`Clearing Items`)),
+		'appQuit': app.quit
+	}).getTemplate());
+    //Insert Menu
+    Menu.setApplicationMenu(mainMenu);
 }
 
 // This method will be called when Electron has finished

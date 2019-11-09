@@ -1,7 +1,7 @@
 import { app, BrowserWindow, Menu } from "electron";
 import * as path from "path";
 
-import initMainMenu from "./menus/MainMenu";
+import MainMenu from "./menus/MainMenu";
 
 
 let mainWindow: Electron.BrowserWindow;
@@ -11,7 +11,7 @@ function createWindow() {
   mainWindow = new BrowserWindow({
     height: 600,
     webPreferences: {
-      preload: path.join(__dirname, "preload.js"),
+		preload: path.join(__dirname, "preload.js"),
     },
     width: 800,
   });
@@ -31,11 +31,11 @@ function createWindow() {
   });
   
     //Build Menu from TEmplate
-    const mainMenu = Menu.buildFromTemplate(initMainMenu({
+    const mainMenu = Menu.buildFromTemplate(new MainMenu({
 		'addItem': (()=>console.log(`Opening Add Item Window`)),
 		'clearItems': (()=>console.log(`Clearing Items`)),
 		'appQuit': app.quit
-	}));
+	}).getTemplate());
     //Insert Menu
     Menu.setApplicationMenu(mainMenu);
 }
