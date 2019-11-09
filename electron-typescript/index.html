@@ -12,5 +12,19 @@
 
     <!-- You can also require other files to run in this process -->
     <script src="./dist/renderer.js"></script>
+    <script>
+		 const {ipcRenderer} = require('electron')
+
+         // Synchronous message emmiter and handler
+         console.log(ipcRenderer.sendSync('synchronous-message', 'sync ping')) 
+
+         // Async message handler
+         ipcRenderer.on('asynchronous-reply', (event, arg) => {
+            console.log(arg)
+         })
+
+         // Async message sender
+         ipcRenderer.send('asynchronous-message', 'async ping')
+	</script>
   </body>
 </html>

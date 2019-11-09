@@ -1,4 +1,4 @@
-import { app, BrowserWindow, Menu } from "electron";
+import { app, BrowserWindow, Menu, ipcMain } from "electron";
 import * as path from "path";
 
 import MainMenu from "./menus/MainMenu";
@@ -12,6 +12,7 @@ function createWindow() {
     height: 600,
     webPreferences: {
 		preload: path.join(__dirname, "preload.js"),
+		nodeIntegration: true
     },
     width: 800,
   });
@@ -64,3 +65,23 @@ app.on("activate", () => {
 
 // In this file you can include the rest of your app"s specific main process
 // code. You can also put them in separate files and require them here.
+
+
+
+
+
+// Event handler for asynchronous incoming messages
+ipcMain.on('asynchronous-message', (event, arg) => {
+   console.log(arg)
+
+   // Event emitter for sending asynchronous messages
+   event.sender.send('asynchronous-reply', 'async pong')
+})
+
+// Event handler for synchronous incoming messages
+ipcMain.on('synchronous-message', (event, arg) => {
+   console.log(arg) 
+
+   // Synchronous event emmision
+   event.returnValue = 'sync pong'
+})

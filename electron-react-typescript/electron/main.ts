@@ -1,5 +1,5 @@
 // Modules to control application life and create native browser window
-import { app, BrowserWindow, Menu } from "electron";
+import { app, BrowserWindow, Menu, ipcMain } from "electron";
 import * as path from "path";
 import * as url from "url";
 
@@ -72,3 +72,39 @@ app.on('activate', function() {
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
 
+
+
+
+
+
+// Event handler for asynchronous incoming messages
+ipcMain.on('asynchronous-message', (event, arg) => {
+   console.log(arg)
+
+   // Event emitter for sending asynchronous messages
+   event.sender.send('asynchronous-reply', 'async pong')
+})
+
+// Event handler for synchronous incoming messages
+ipcMain.on('synchronous-message', (event, arg) => {
+   console.log(arg) 
+
+   // Synchronous event emmision
+   event.returnValue = 'sync pong'
+})
+
+// Event handler for asynchronous incoming messages
+ipcMain.on('react-asynchronous-message', (event, arg) => {
+   console.log(arg)
+
+   // Event emitter for sending asynchronous messages
+   event.sender.send('react-asynchronous-reply', 'react async pong')
+})
+
+// Event handler for synchronous incoming messages
+ipcMain.on('react-synchronous-message', (event, arg) => {
+   console.log(arg) 
+
+   // Synchronous event emmision
+   event.returnValue = 'react sync pong'
+})
