@@ -1,5 +1,8 @@
-import { app, BrowserWindow } from "electron";
+import { app, BrowserWindow, Menu } from "electron";
 import * as path from "path";
+
+import initMainMenu from "./menus/MainMenu";
+
 
 let mainWindow: Electron.BrowserWindow;
 
@@ -26,6 +29,15 @@ function createWindow() {
     // when you should delete the corresponding element.
     mainWindow = null;
   });
+  
+    //Build Menu from TEmplate
+    const mainMenu = Menu.buildFromTemplate(initMainMenu({
+		'addItem': (()=>console.log(`Opening Add Item Window`)),
+		'clearItems': (()=>console.log(`Clearing Items`)),
+		'appQuit': app.quit
+	}));
+    //Insert Menu
+    Menu.setApplicationMenu(mainMenu);
 }
 
 // This method will be called when Electron has finished
