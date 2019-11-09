@@ -46,7 +46,7 @@ const MainMenu = function(this: MainMenu, menuHandlers: any){
 	
 	
 	//Add developper tool item is not in prod
-	if (process.env.NODE_ENV !== 'production') {
+	if (process.env.NODE_ENV === 'dev') {
 		this.menuTemplate.push({
 			label: 'Developer Tools',
 			submenu: [{
