@@ -17,11 +17,16 @@ function createWindow() {
     width: 800,
   });
 
+
+
   // and load the index.html of the app.
   mainWindow.loadFile(path.join(__dirname, "../index.html"));
 
   // Open the DevTools.
-  mainWindow.webContents.openDevTools();
+  if (process.env.NODE_ENV === 'dev'){
+	  mainWindow.webContents.openDevTools();
+  }
+  
 
   // Emitted when the window is closed.
   mainWindow.on("closed", () => {
