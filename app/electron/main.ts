@@ -1,22 +1,20 @@
 // Modules to control application life and create native browser window
-const { app, BrowserWindow, ipcMain } = require('electron')
-const path = require('path')
-const url = require('url');
+import { app, BrowserWindow, Menu, ipcMain } from "electron";
+import * as path from "path";
+import * as url from "url";
 
-const db = require('./db');
+import MainMenu from "./menus/MainMenu";
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
-let mainWindow
+let mainWindow: Electron.BrowserWindow | null;
 
 function createWindow() {
     // Create the browser window.
     mainWindow = new BrowserWindow({
         width: 800,
         height: 600,
-        frame: false,
         webPreferences: {
-            preload: path.join(__dirname, 'preload.js'),
             nodeIntegration: true
         }
     })
@@ -24,16 +22,16 @@ function createWindow() {
     // and load the index.html of the app.
     // mainWindow.loadFile('index.html')
     const startUrl = process.env.ELECTRON_START_URL || url.format({
-        pathname: path.join(__dirname, '/../build/index.html'),
+        pathname: path.join(__dirname, '/index.html'),
         protocol: 'file:',
         slashes: true
     });
     mainWindow.loadURL(startUrl);
 
-    // Open the DevTools.
-    mainWindow.webContents.openDevTools()
-
-    // setTimeout(db.init, 0)
+	// Open the DevTools.
+	if (process.env.NODE_ENV === 'dev'){
+		mainWindow.webContents.openDevTools();
+	}
 
 
     // Emitted when the window is closed.
@@ -43,6 +41,16 @@ function createWindow() {
         // when you should delete the corresponding element.
         mainWindow = null
     })
+	
+	
+    //Build Menu from TEmplate
+    const mainMenu = Menu.buildFromTemplate(new MainMenu({
+		'addItem': (()=>console.log(`Opening Add Item Window`)),
+		'clearItems': (()=>console.log(`Clearing Items`)),
+		'appQuit': app.quit
+	}).getTemplate());
+    //Insert Menu
+    Menu.setApplicationMenu(mainMenu);
 }
 
 // This method will be called when Electron has finished
@@ -67,22 +75,38 @@ app.on('activate', function() {
 // code. You can also put them in separate files and require them here.
 
 
-ipcMain.on('app.tsx', (event, arg) => {
-    const channel = 'app.tsx'
-    console.log(arg)
-    switch (arg.command) {
-        case 'editTask':
-            event.reply(channel, { command: '', data: 'processing' })
-            break
-        case 'editTime':
-            console.log(arg.data.hours)
-            console.log(arg.data.minutes)
-            console.log(arg.data.seconds)
-            event.reply(channel, { command: '', data: 'processing' })
-            break
-        default:
-            console.log(`Unhandled Message: `, arg)
-            break
-    }
 
+
+
+
+// Event handler for asynchronous incoming messages
+ipcMain.on('asynchronous-message', (event, arg) => {
+   console.log(arg)
+
+   // Event emitter for sending asynchronous messages
+   event.sender.send('asynchronous-reply', 'async pong')
+})
+
+// Event handler for synchronous incoming messages
+ipcMain.on('synchronous-message', (event, arg) => {
+   console.log(arg) 
+
+   // Synchronous event emmision
+   event.returnValue = 'sync pong'
+})
+
+// Event handler for asynchronous incoming messages
+ipcMain.on('react-asynchronous-message', (event, arg) => {
+   console.log(arg)
+
+   // Event emitter for sending asynchronous messages
+   event.sender.send('react-asynchronous-reply', 'react async pong')
+})
+
+// Event handler for synchronous incoming messages
+ipcMain.on('react-synchronous-message', (event, arg) => {
+   console.log(arg) 
+
+   // Synchronous event emmision
+   event.returnValue = 'react sync pong'
 })
