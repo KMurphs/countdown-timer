@@ -1,4 +1,4 @@
-import {parseTimeValue, getSignificantDisplay} from './CountDownFormat'
+import {parseTimeValue, getSignificantDisplay, getLongDisplay} from './CountDownFormat'
 
 
 
@@ -81,6 +81,34 @@ describe('CountDown Format functions', () => {
     ]
     testData.forEach(item => {
       expect(getSignificantDisplay(item.timeValue, ',')).toBe(item.displayValue);
+    })
+
+  });
+
+  test('Can display long time value', () => {
+    let testData = [
+      { timeValue: 0, displayValue: '00.00'},
+      { timeValue: 1, displayValue: '01.00'},
+      { timeValue: -1, displayValue: '-01.00'},
+      { timeValue: 1.25, displayValue: '01.25'},
+      { timeValue: -1.25, displayValue: '-01.25'},
+      { timeValue: 21.25, displayValue: '21.25'},
+      { timeValue: -21.25, displayValue: '-21.25'},
+      { timeValue: 59.25, displayValue: '59.25'},
+      { timeValue: -59.25, displayValue: '-59.25'},
+      { timeValue: 60, displayValue: '01:00.00'},
+      { timeValue: -60, displayValue: '-01:00.00'},
+      { timeValue: 61.25, displayValue: '01:01.25'},
+      { timeValue: -61.25, displayValue: '-01:01.25'},
+      { timeValue: 3599.25, displayValue: '59:59.25'},
+      { timeValue: -3599.25, displayValue: '-59:59.25'},
+      { timeValue: 3600, displayValue: '1:00:00.00'},
+      { timeValue: -3600, displayValue: '-1:00:00.00'},
+      { timeValue: 3601.25, displayValue: '1:00:01.25'},
+      { timeValue: -3601.25, displayValue: '-1:00:01.25'},
+    ]
+    testData.forEach(item => {
+      expect(getLongDisplay(item.timeValue)).toBe(item.displayValue);
     })
 
   });

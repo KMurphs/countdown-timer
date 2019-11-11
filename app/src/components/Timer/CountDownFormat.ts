@@ -33,7 +33,15 @@ const getSignificantDisplay = (countdownValueSec: number, decimalSeparator: stri
   return `${timeObj.isNegative?'-':''}${display}`
 }
 
+const getLongDisplay = (countdownValueSec: number, decimalSeparator: string = '.'):string => {
 
+  let timeObj: TimeComponents = parseTimeValue(countdownValueSec)
+
+  return `${timeObj.isNegative?'-' : ''
+          }${timeObj.hours>0 ? timeObj.hours+':' : ''
+          }${timeObj.minutes>0 || timeObj.hours>0?padWithZeros(timeObj.minutes.toString(), 2)+':' : ''
+          }${padWithZeros(timeObj.seconds.toFixed(2), 2)}`
+}
 
 
 const padWithZeros = (value: string, width: number, decimalSeparator: string = '.'):string => {
@@ -65,7 +73,10 @@ const parseTimeValue = (timeValueSec: number):TimeComponents => {
   return timeObj
 }
 
+function getColor(perc: number){
+  var hue = ((perc)*120).toString(10);
+  return ["hsl(",hue,",60%,50%)"].join("");
+}
 
 
-
-export { parseTimeValue, getSignificantDisplay }
+export { parseTimeValue, getSignificantDisplay, getLongDisplay, getColor }

@@ -1,15 +1,18 @@
 import React, { useState, useEffect } from 'react';
 // import './Timer.css';
 import CountDownTimer from './CountDownTimer'
-import {getSignificantDisplay} from './CountDownFormat'
+import TimerLong from './TimerLong'
+import TimerShort from './TimerShort'
+import {getSignificantDisplay, getLongDisplay} from './CountDownFormat'
 
 
 const Timer: React.FC = () => {
-
-	const [countDownTimer, setCountDownTimer] = useState<CountDownTimer>(new CountDownTimer(90))
+	let target = 30
+	const [countDownTimer, setCountDownTimer] = useState<CountDownTimer>(new CountDownTimer(target))
 	const [tmp, setTmp] = useState<boolean>(false)
 
-	console.log('Preparing Timer for Rerender')
+
+
 	countDownTimer.start()
 	useEffect(()=>{
 		const interval = setInterval(()=>{
@@ -18,12 +21,19 @@ const Timer: React.FC = () => {
 		return () => clearInterval(interval)
 	})
 		 
+	let timerValue = countDownTimer.getSecValue()
+	let percentage = 100-100*timerValue/target
+
 	return (
 		<div className="Timer">
-			<span>{getSignificantDisplay(countDownTimer.getSecValue())}</span>
+			<TimerShort content={getSignificantDisplay(timerValue)} percentage={percentage}/>
+			<TimerLong content={getLongDisplay(timerValue)} percentage={percentage}/>
 		</div>
 	);
 
 }
 
 export default Timer;
+
+
+

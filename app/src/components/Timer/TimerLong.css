@@ -1,0 +1,29 @@
+.Timer-Long {
+    width: 100%;
+    text-align: center;
+    font-size: 2rem;
+    overflow: hidden;
+    max-width: 200px;
+    position: relative;
+    height: 3rem;
+}
+
+.Timer-Long span {
+    transition: all .1s;
+    margin: .5em;
+}
+
+.Timer-Long div {
+    height: 3px;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    transition: all .1s;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.Timer-Long div:nth-of-type(2) {
+    right: 10%;
+    background: red;
+}
