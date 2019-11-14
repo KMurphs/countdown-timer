@@ -2,6 +2,7 @@
     display: flex;
     justify-content: flex-start;
     margin: 2em 2em;
+    margin: 1em 2em;
     width: calc(100%-4em);
     color: var(--secondary-white);
     border-bottom: 1px solid var(--secondary-white);
@@ -80,6 +81,7 @@
     --color: #ccc;
     position: relative;
     top: calc(-2em + 3px);
+    top: calc(-1em + 3px);
     left: 2em;
     /* right: 0; */
     /* right: 10em; */

@@ -30,10 +30,14 @@ type Props = {
 	getCurrentSprintElapsedTime: () => number
 	getSprintElapsedTimeByID: (projectName: string, sprintID: number) => number
 	getCurrentSprint: () => Sprint
-	handleNewSprint: (projectName: string) => Sprint
+	handleNewSprint: (projectName: string, sprintDetails: {[key: string]: any}) => Sprint
 }
 
 const TaskPage: React.FC<Props> = (props) => {
+
+
+
+
 
 	const currentSprint = props.getCurrentSprint()
 	const [currentSprintElapsedTime, setCurrentSprintElapsedTime] = useState<number>(0)
@@ -43,9 +47,6 @@ const TaskPage: React.FC<Props> = (props) => {
 			Status: TaskTimerStatus.WAS_NEVER_STARTED
 		}
 	}))
-
-
-
 	useEffect(()=>{
 		const interval = setInterval(()=>{
 			const currentSprint = props.getCurrentSprint()
@@ -56,6 +57,13 @@ const TaskPage: React.FC<Props> = (props) => {
 
 		return ()=>{clearInterval(interval); console.log('in Closing: ')}
 	}, [currentSprint.ID])
+
+
+
+
+
+
+
 
 
 
@@ -70,7 +78,6 @@ const TaskPage: React.FC<Props> = (props) => {
 			}
 			return task
 		}))
-		console.log(sprintID, action)
 
 		switch(action.toLowerCase()){
 			case 'start':
@@ -101,6 +108,9 @@ const TaskPage: React.FC<Props> = (props) => {
 
 
 
+
+
+
 	return (
 		<div className="Page TaskPage">
 			<div className="Project-Name UnderlinedInput">
@@ -114,37 +124,55 @@ const TaskPage: React.FC<Props> = (props) => {
 			
 			<div className="Project-Tasks">
 				{
-					props.projectSprints.sort((a,b)=>a.No-b.No).map((sprint, index) => {
-						return <Task key={sprint.ID}
-												 sprint={sprint} 
-												 active={sprint.ID === currentSprint.ID}
-												 taskStatus={tasks[index].Status}
-												 sprintElapsedTime={sprint.ID === currentSprint.ID ? currentSprintElapsedTime : props.getSprintElapsedTimeByID(props.projectName, sprint.ID ) }
-												 handleDetailsChange={(sprintID, changedDetails)=>props.handleDetailChanges(props.projectName, sprintID, changedDetails)}
-												 handleSprintTimerAction={handleSprintTimerAction}
-												 handleNewSprint={()=>{ 
-													 let newSprint = props.handleNewSprint(props.projectName); 
-													 props.handleDetailChanges(props.projectName, newSprint.ID, {No: sprint.No + 1})
-													 props.projectSprints.forEach(item => {
-														 if(item.No > sprint.No){
-															item.No = item.No + 1
-														 }
-													 	 props.handleDetailChanges(props.projectName, item.ID, {No: item.No})
-													 })
-													 console.log(sprint.ID, sprint.No, newSprint)
-													 setTasks(tasks => [...tasks, {	
-														ID: newSprint.ID, 
-														Status: TaskTimerStatus.WAS_NEVER_STARTED
-													 }])
-												 }}/>
-					})
+					props.projectSprints.length >= 0 && props.projectSprints.map((sprint, index) => {
+							return <Task key={sprint.ID}
+													sprint={(index + 1 === sprint.No ? true : props.handleDetailChanges(props.projectName, sprint.ID, {No: index}) || true) && sprint} 
+													active={sprint.ID === currentSprint.ID}
+													taskStatus={tasks[index].Status}
+													sprintElapsedTime={sprint.ID === currentSprint.ID ? currentSprintElapsedTime : props.getSprintElapsedTimeByID(props.projectName, sprint.ID) }
+													handleDetailsChange={(sprintID, changedDetails)=>{
+														//  if(changedDetails.DurationSec){
+														// 	 console.log('hello', sprint.DurationMs/1000, changedDetails.DurationSec, props.getSprintElapsedTimeByID(props.projectName, sprint.ID))
+														// 	changedDetails.DurationSec =  (sprint.DurationMs/1000)
+														// 																+ changedDetails.DurationSec 
+														// 																- props.getSprintElapsedTimeByID(props.projectName, sprint.ID)
+														//  }
+														props.handleDetailChanges(props.projectName, sprintID, changedDetails)
+													}}
+													handleSprintTimerAction={handleSprintTimerAction}
+													handleNewSprint={()=>{ 
+														let newSprint = props.handleNewSprint(props.projectName, {No: sprint.No + 1}); 
+														props.projectSprints.forEach(item => {
+															if(item.No > sprint.No){
+																props.handleDetailChanges(props.projectName, item.ID, {No: item.No + 1})
+															}
+														})
+														setTasks(tasks => [...tasks, {	
+															ID: newSprint.ID, 
+															Status: TaskTimerStatus.WAS_NEVER_STARTED
+														}])
+													}}/>
+						})
+						
+				}
+				{
+					props.projectSprints.length === 0 && (
+					<div className="Empty-Tasks">
+						<span onClick={(evt)=>{
+								let newSprint = props.handleNewSprint(props.projectName, {No: 1}); 
+								setTasks(tasks => [...tasks, {	
+										ID: newSprint.ID, 
+										Status: TaskTimerStatus.WAS_NEVER_STARTED
+								}])
+						}}>
+							Click To Add a new Task
+						</span>
+					</div>)
 				}
 			</div>
 
 			<div className="Project-Controls">
 				<div><div className="control-wrapper"><i className="fas fa-undo"></i></div></div>
-				<div><div className="control-wrapper"><i className="fas fa-play"></i></div></div>
-				<div><div className="control-wrapper"><i className="fas fa-forward"></i></div></div>
 				<div><div className="control-wrapper"><i className="fas fa-stop"></i></div></div>
 			</div>
 

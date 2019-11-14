@@ -78,7 +78,7 @@ const getInvalidSprint = (tmpNo: number = 1, durationMin: number = 60): Sprint =
 
 const CurrentSprint = function(this: CurrentSprint){
   this.owningProject = ''
-  this.sprint = getDefaultSprint()
+  this.sprint = getInvalidSprint()
 } as any as { new (): CurrentSprint; };
 CurrentSprint.prototype.get = function(this: CurrentSprint){
   return {...this}
@@ -93,49 +93,49 @@ let currentSprint: CurrentSprint = new CurrentSprint()
 
 let model: { [key: string]: Sprint[]; } = {
   'TestProject': [
-    {
-      ID: new Date().getTime()+1,
-      CreatedAt: new Date().getTime()+1,
-      Status: SprintStatus.SCHEDULED,
+    // {
+    //   ID: new Date().getTime()+1,
+    //   CreatedAt: new Date().getTime()+1,
+    //   Status: SprintStatus.SCHEDULED,
   
-      Name: `Sprint ${1}`,
-      No: 1,
-      DurationMs: 5000,
+    //   Name: `Sprint ${1}`,
+    //   No: 1,
+    //   DurationMs: 5000,
   
-      StartedAt: 0,
-      OpStart: 0,
-      PausedAt: 0,
-      Pauses: [],
-      Runs: [],
-    },{
-      ID: new Date().getTime()+2,
-      CreatedAt: new Date().getTime()+2,
-      Status: SprintStatus.SCHEDULED,
+    //   StartedAt: 0,
+    //   OpStart: 0,
+    //   PausedAt: 0,
+    //   Pauses: [],
+    //   Runs: [],
+    // },{
+    //   ID: new Date().getTime()+2,
+    //   CreatedAt: new Date().getTime()+2,
+    //   Status: SprintStatus.SCHEDULED,
   
-      Name: `Sprint ${2}`,
-      No: 2,
-      DurationMs: 10000,
+    //   Name: `Sprint ${2}`,
+    //   No: 2,
+    //   DurationMs: 10000,
   
-      StartedAt: 0,
-      OpStart: 0,
-      PausedAt: 0,
-      Pauses: [],
-      Runs: [],
-    },{
-      ID: new Date().getTime()+3,
-      CreatedAt: new Date().getTime()+3,
-      Status: SprintStatus.SCHEDULED,
+    //   StartedAt: 0,
+    //   OpStart: 0,
+    //   PausedAt: 0,
+    //   Pauses: [],
+    //   Runs: [],
+    // },{
+    //   ID: new Date().getTime()+3,
+    //   CreatedAt: new Date().getTime()+3,
+    //   Status: SprintStatus.SCHEDULED,
   
-      Name: `Sprint ${3}`,
-      No: 3,
-      DurationMs: 125000,
+    //   Name: `Sprint ${3}`,
+    //   No: 3,
+    //   DurationMs: 125000,
   
-      StartedAt: 0,
-      OpStart: 0,
-      PausedAt: 0,
-      Pauses: [],
-      Runs: [],
-    },
+    //   StartedAt: 0,
+    //   OpStart: 0,
+    //   PausedAt: 0,
+    //   Pauses: [],
+    //   Runs: [],
+    // },
   ]
 };
 

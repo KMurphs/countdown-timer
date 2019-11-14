@@ -32,12 +32,13 @@ const App: React.FC = () => {
     ipcRenderer.send('react-asynchronous-message', 'react async ping')
 
     let projectName = 'TestProject'
-    let projectSprints = controller.getProjectWithName(projectName)
+
 		 
 	return (
 		<div className="App">
 			{/* <Timer/> */}
-            <TaskPage projectName={projectName} projectSprints={projectSprints} 
+            <TaskPage projectName={projectName} 
+                      projectSprints={controller.getProjectWithName(projectName)} 
                       handleSprintStart={controller.startSprintOnPrjectWithName}
                       handleSprintPause={controller.pauseSprintOnPrjectWithName}
                       handleSprintResume={controller.resumeSprintOnPrjectWithName}
