@@ -33,13 +33,15 @@ const getSignificantDisplay = (countdownValueSec: number, decimalSeparator: stri
   return `${timeObj.isNegative?'-':''}${display}`
 }
 
-const getLongDisplay = (countdownValueSec: number, decimalSeparator: string = '.'):string => {
+const getLongDisplay = (countdownValueSec: number, useTextSeparator: boolean = false, decimalSeparator: string = '.'):string => {
 
   let timeObj: TimeComponents = parseTimeValue(countdownValueSec)
+  let hoursSeparator = useTextSeparator ? 'H' : ':'
+  let minsSeparator = useTextSeparator ? 'MIN' : ':'
 
   return `${timeObj.isNegative?'-' : ''
-          }${timeObj.hours>0 ? timeObj.hours+':' : ''
-          }${timeObj.minutes>0 || timeObj.hours>0?padWithZeros(timeObj.minutes.toString(), 2)+':' : ''
+          }${timeObj.hours>0 ? timeObj.hours+hoursSeparator : ''
+          }${timeObj.minutes>0 || timeObj.hours>0?padWithZeros(timeObj.minutes.toString(), 2)+minsSeparator : ''
           }${padWithZeros(timeObj.seconds.toFixed(2), 2)}`
 }
 
@@ -79,4 +81,4 @@ function getColor(perc: number){
 }
 
 
-export { parseTimeValue, getSignificantDisplay, getLongDisplay, getColor }
+export { parseTimeValue, getSignificantDisplay, getLongDisplay, getColor , padWithZeros}

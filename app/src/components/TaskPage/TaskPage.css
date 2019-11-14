@@ -1,0 +1,95 @@
+.TaskPage>div {
+    width: calc(100%-2em);
+    text-align: center;
+    margin: .5em 0;
+}
+
+.TaskPage .Project-Name {
+    position: relative;
+}
+
+.TaskPage .Project-Name input {
+    width: 100%;
+    text-align: center;
+    font-size: 2.5em;
+}
+
+.TaskPage .Project-Timer {
+    margin: 2em 0 4.5em 0;
+}
+
+.TaskPage .Project-Tasks {
+    margin-right: 1em;
+    height: 360px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.TaskPage .Project-Controls {
+    height: 130px;
+    background: rgba(0, 0, 0, .2);
+    bottom: 0;
+    left: 0;
+    right: 0;
+    position: absolute;
+    margin: 2em 0 0 0;
+    /* padding: 0 0 1.5em 0; */
+    border-radius: 2px;
+    /* display: flex;
+    justify-content: space-around;
+    align-items: stretch; */
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+}
+
+.TaskPage .Project-Controls div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    width: 100%;
+}
+
+.TaskPage .Project-Controls div i {
+    color: var(--secondary-white);
+    font-size: 1.8em;
+}
+
+.TaskPage .Project-Controls div:nth-of-type(2) i {
+    font-size: 2.7em;
+}
+
+.TaskPage .Project-Controls div:nth-of-type(3) i {
+    font-size: 3.2em;
+}
+
+.TaskPage .Project-Controls .control-wrapper {
+    /* display: flex;
+    justify-content: center;
+    align-items: center;
+    display: inline; */
+    /* margin: .8em;
+    position: absolute;
+    top: .8em;
+    left: .8em;
+    right: -.8em;
+    bottom: .8em; */
+    width: 5em;
+    height: 5em;
+    padding: .8em;
+    border-radius: 10px;
+    background: rgba(0, 0, 0, .2);
+    transition: all .6s;
+    cursor: pointer;
+}
+
+.TaskPage .Project-Controls div:first-of-type .control-wrapper,
+.TaskPage .Project-Controls div:last-of-type .control-wrapper {
+    width: 3.8em;
+    height: 3.8em;
+}
+
+.TaskPage .Project-Controls .control-wrapper:hover {
+    transition: all .6s;
+    background: rgba(0, 0, 0, .5);
+}

@@ -6,6 +6,8 @@
     max-width: 200px;
     position: relative;
     height: 3.5rem;
+    opacity: 1;
+    transition: all .6s;
 }
 
 .Timer-Long span {
@@ -26,4 +28,9 @@
 .Timer-Long div:nth-of-type(2) {
     right: 10%;
     background: red;
+}
+
+.Timer-invisible {
+    opacity: 0;
+    transition: all .6s;
 }

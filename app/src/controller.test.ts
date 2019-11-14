@@ -30,7 +30,7 @@ describe('Controller Module', ()=>{
     expect(addedProject[0]).toHaveProperty('Status', 0)
     expect(addedProject[0]).toHaveProperty('Pauses', [])
     expect(addedProject[0]).toHaveProperty('Runs', [])
-    expect(controller.getProjectsName()).toEqual(['Project'])
+    expect(controller.getProjectsName()).toContain('Project')
   }) 
 
   test('Creates New Project When getting one that does not exist', ()=>{
