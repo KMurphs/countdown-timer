@@ -17,7 +17,16 @@ In other words it's impossible with pure CSS. */
 .App .Page {
     height: 100vh;
     width: 100%;
-    background: transparent;
+    /* background: transparent; */
+    /* background: #800080; */
+    /* fallback for old browsers */
+    /* background: -webkit-linear-gradient(190deg, #6accca, #5f2c82); */
+    /* Chrome 10-25, Safari 5.1-6 */
+    /* background: linear-gradient(190deg, #6accca, #5f2c82); */
+    /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    background: url('/imgs/bg.png');
+    background-repeat: no-repeat;
+    background-size: cover;
     overflow: hidden;
 }
 
@@ -36,6 +45,10 @@ In other words it's impossible with pure CSS. */
 
 .App input:focus {
     outline: none;
+}
+
+.App .UnderlinedInput {
+    position: relative;
 }
 
 .App .UnderlinedInput::after {

@@ -12,6 +12,7 @@
 
 .Timer-Long span {
     transition: all .1s;
+    color: #444;
     /* margin: 1em; */
 }
 

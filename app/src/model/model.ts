@@ -83,7 +83,7 @@ const CurrentSprint = function(this: CurrentSprint){
 CurrentSprint.prototype.get = function(this: CurrentSprint){
   return {...this}
 }
-CurrentSprint.prototype.set = function(this: CurrentSprint, owningProject: string, sprint: Sprint){
+CurrentSprint.prototype.set = function(this: CurrentSprint, owningProject: string, sprint: Sprint = getInvalidSprint()){
   this.owningProject = owningProject
   this.sprint = sprint
   return {...this}

@@ -5,15 +5,21 @@ import * as url from "url";
 
 import MainMenu from "./menus/MainMenu";
 
+
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
-let mainWindow: Electron.BrowserWindow | null;
-
+let mainWindow: Electron.BrowserWindow | null = null;
+type msg = {
+    command: string,
+    data: any
+}
 function createWindow() {
     // Create the browser window.
     mainWindow = new BrowserWindow({
-        width: 800,
-        height: 600,
+        width: 500,
+        height: 800,
+        transparent: true,
+        frame:false,
         webPreferences: {
             nodeIntegration: true
         }
@@ -79,34 +85,45 @@ app.on('activate', function() {
 
 
 
-// Event handler for asynchronous incoming messages
-ipcMain.on('asynchronous-message', (event, arg) => {
-   console.log(arg)
+// // Event handler for asynchronous incoming messages
+// ipcMain.on('asynchronous-message', (event, arg) => {
+//    console.log(arg)
 
-   // Event emitter for sending asynchronous messages
-   event.sender.send('asynchronous-reply', 'async pong')
-})
+//    // Event emitter for sending asynchronous messages
+//    event.sender.send('asynchronous-reply', 'async pong')
+// })
+
+// // Event handler for synchronous incoming messages
+// ipcMain.on('synchronous-message', (event, arg) => {
+//    console.log(arg) 
+
+//    // Synchronous event emmision
+//    event.returnValue = 'sync pong'
+// })
+
+// // Event handler for asynchronous incoming messages
+// ipcMain.on('react-asynchronous-message', (event, arg) => {
+//    console.log(arg)
+
+//    // Event emitter for sending asynchronous messages
+//    event.sender.send('react-asynchronous-reply', 'react async pong')
+// })
+
+
 
 // Event handler for synchronous incoming messages
-ipcMain.on('synchronous-message', (event, arg) => {
-   console.log(arg) 
+ipcMain.on('msgFromApp', (event, arg) => {
+    console.log('Message from App: ', arg) 
 
-   // Synchronous event emmision
-   event.returnValue = 'sync pong'
-})
+    switch(arg.command.toLowerCase()){
+        case 'resize-height':
+            arg.data !== null && arg.data > 25 && mainWindow!== null && mainWindow.setBounds({ height: arg.data })
+            break
+        default:
+            console.log('Unprocessed Message From App: ', arg) 
+            break
+    }
 
-// Event handler for asynchronous incoming messages
-ipcMain.on('react-asynchronous-message', (event, arg) => {
-   console.log(arg)
-
-   // Event emitter for sending asynchronous messages
-   event.sender.send('react-asynchronous-reply', 'react async pong')
-})
-
-// Event handler for synchronous incoming messages
-ipcMain.on('react-synchronous-message', (event, arg) => {
-   console.log(arg) 
-
-   // Synchronous event emmision
-   event.returnValue = 'react sync pong'
+    // Synchronous event emmision
+    event.returnValue = 'msgFromApp Processed'
 })

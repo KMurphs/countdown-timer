@@ -1,4 +1,4 @@
-import model, { Sprint, SprintStatus, currentSprint, getDefaultSprint, getInvalidSprint } from './model/model'
+import model, { Sprint, SprintStatus, currentSprint as _currentSprint, getDefaultSprint, getInvalidSprint } from './model/model'
 
 let controller = {
 
@@ -106,11 +106,11 @@ let controller = {
   },
   getProjectWithName: (projectName: string)=> {
 
-    if(!model[projectName]){
+    if(!model[projectName] && projectName!==''){
       model[projectName]=[controller.getDefaultSprint(model[projectName] ? model[projectName].length + 1 : 1)]
     } 
 
-    return [...model[projectName]]
+    return projectName!=='' ? [...model[projectName]] : []
   },
   startSprintOnPrjectWithName: (projectName: string, sprintID: number): Sprint =>{
     let project = controller.getProjectWithName(projectName)
@@ -120,7 +120,7 @@ let controller = {
       sprintWithGivenID.OpStart = sprintWithGivenID.StartedAt
       sprintWithGivenID.Status = SprintStatus.EXECUTING
 
-      currentSprint.set(projectName, sprintWithGivenID)
+      _currentSprint.set(projectName, sprintWithGivenID)
     }
 
     return {...sprintWithGivenID}
@@ -133,7 +133,7 @@ let controller = {
       sprintWithGivenID.Status = SprintStatus.PAUSED
     }
 
-    currentSprint.set('', getInvalidSprint())
+    _currentSprint.set(projectName, getInvalidSprint())
 
     return {...sprintWithGivenID}
   },
@@ -151,7 +151,7 @@ let controller = {
       sprintWithGivenID.PausedAt = 0
     }
 
-    currentSprint.set(projectName, sprintWithGivenID)
+    _currentSprint.set(projectName, sprintWithGivenID)
 
     return {...sprintWithGivenID}
   },
@@ -169,7 +169,16 @@ let controller = {
     sprintWithGivenID.PausedAt = 0
     sprintWithGivenID.Status = SprintStatus.COMPLETED
 
-    currentSprint.set('', getInvalidSprint())
+    _currentSprint.set(projectName, getInvalidSprint())
+
+    return {...sprintWithGivenID}
+  },
+  resetSprintOnPrjectWithName: (projectName: string, sprintID: number): Sprint =>{
+    controller.stopSprintOnPrjectWithName(projectName, sprintID)
+
+    let project = controller.getProjectWithName(projectName)
+    let [sprintWithGivenID] = project.filter(item => item.ID === sprintID)
+    sprintWithGivenID.Status = SprintStatus.SCHEDULED
 
     return {...sprintWithGivenID}
   },
@@ -201,24 +210,29 @@ let controller = {
   
     return msValue/1000
   },
-  getCurrentSprint: (): Sprint =>{
-    return currentSprint.get().sprint
+  getCurrentSprint: (): {currentProject: string, currentSprint: Sprint} =>{
+    let __currentSprint = _currentSprint.get()
+    return {currentProject: __currentSprint.owningProject, currentSprint: __currentSprint.sprint}
+  },
+  setCurrentSprint: (currentProject: string, currentSprint: Sprint = getInvalidSprint()): {currentProject: string, currentSprint: Sprint} =>{
+    let __currentSprint = _currentSprint.set(currentProject, currentSprint)
+    return {currentProject: __currentSprint.owningProject, currentSprint: __currentSprint.sprint}
   },
   getCurrentSprintElapsedTime: (): number =>{
-    let _currentSprint = currentSprint.get()
-    return controller.getSprintElapsedTimeOnPrjectWithName(_currentSprint.owningProject, _currentSprint.sprint.ID)
+    let __currentSprint = _currentSprint.get()
+    return controller.getSprintElapsedTimeOnPrjectWithName(__currentSprint.owningProject, __currentSprint.sprint.ID)
   },
   stopCurrentSprint: (): Sprint =>{
-    let _currentSprint = currentSprint.get()
-    return controller.stopSprintOnPrjectWithName(_currentSprint.owningProject, _currentSprint.sprint.ID)
+    let __currentSprint = _currentSprint.get()
+    return controller.stopSprintOnPrjectWithName(__currentSprint.owningProject, __currentSprint.sprint.ID)
   },
   resumeCurrentSprint: (): Sprint =>{
-    let _currentSprint = currentSprint.get()
-    return controller.resumeSprintOnPrjectWithName(_currentSprint.owningProject, _currentSprint.sprint.ID)
+    let __currentSprint = _currentSprint.get()
+    return controller.resumeSprintOnPrjectWithName(__currentSprint.owningProject, __currentSprint.sprint.ID)
   },
   pauseCurrentSprint: (): Sprint =>{
-    let _currentSprint = currentSprint.get()
-    return controller.pauseSprintOnPrjectWithName(_currentSprint.owningProject, _currentSprint.sprint.ID)
+    let __currentSprint = _currentSprint.get()
+    return controller.pauseSprintOnPrjectWithName(__currentSprint.owningProject, __currentSprint.sprint.ID)
   }
 }
 

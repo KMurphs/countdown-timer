@@ -9,9 +9,13 @@
 }
 
 .TaskPage .Project-Name input {
-    width: 100%;
+    width: 95%;
     text-align: center;
-    font-size: 2.5em;
+    font-size: 2.2em;
+}
+
+.TaskPage .Project-Name--Empty input {
+    border-bottom: 1px solid var(--secondary-white);
 }
 
 .TaskPage .Project-Timer {

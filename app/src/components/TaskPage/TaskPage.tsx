@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from 'react';
+import { useHistory } from "react-router-dom";
+import { Sprint } from '../../model/model';
+import './TaskPage.css';
+
 import TimerLong from '../Timer/TimerLong';
+import { getLongDisplay } from '../Timer/CountDownFormat';
+
+import TaskStatus from './TaskStatus';
 import Task from './Task';
 
-import { Sprint } from '../../model/model';
 
-import './TaskPage.css';
-import TimerShort from '../Timer/TimerShort';
-import { getLongDisplay } from '../Timer/CountDownFormat';
-import TaskStatus from './TaskStatus';
+
+
 
 export enum TaskTimerStatus {
 	WAS_NEVER_STARTED = 0,
@@ -20,17 +24,19 @@ type TaskStatus = {
 	Status: TaskTimerStatus
 }
 type Props = {
-  projectName: string;
-	projectSprints: Sprint[];
-	handleDetailChanges: (projectName: string, sprintID: number, sprintDetails: {[key: string]: any}) => Sprint | null
-	handleSprintStart: (projectName: string, sprintID: number) => Sprint
-	handleSprintPause: (projectName: string, sprintID: number) => void
-	handleSprintResume: (projectName: string, sprintID: number) => void
-	handleSprintStop: (projectName: string, sprintID: number) => void
+  getProjects: ()=>string[];
+	getProjectSprints: (currentProject: string) => Sprint[];
+	handleDetailChanges: (currentProject: string, sprintID: number, sprintDetails: {[key: string]: any}) => Sprint | null
+	handleSprintStart: (currentProject: string, sprintID: number) => Sprint
+	handleSprintPause: (currentProject: string, sprintID: number) => void
+	handleSprintResume: (currentProject: string, sprintID: number) => void
+	handleSprintReset: (currentProject: string, sprintID: number) => void
+	handleSprintStop: (currentProject: string, sprintID: number) => void
 	getCurrentSprintElapsedTime: () => number
-	getSprintElapsedTimeByID: (projectName: string, sprintID: number) => number
-	getCurrentSprint: () => Sprint
-	handleNewSprint: (projectName: string, sprintDetails: {[key: string]: any}) => Sprint
+	getSprintElapsedTimeByID: (currentProject: string, sprintID: number) => number
+	getCurrentSprint: () => {currentProject: string, currentSprint: Sprint}
+	setCurrentSprint: (currentProject: string, currentSprint?: Sprint) => {currentProject: string, currentSprint: Sprint}
+	handleNewSprint: (currentProject: string, sprintDetails: {[key: string]: any}) => Sprint
 }
 
 const TaskPage: React.FC<Props> = (props) => {
@@ -39,28 +45,71 @@ const TaskPage: React.FC<Props> = (props) => {
 
 
 
-	const currentSprint = props.getCurrentSprint()
+	const {currentProject, currentSprint} = props.getCurrentSprint()
+	const [_currentProject, set_currentProject] = useState<string|null>(null) //Used for local state while user is wrting in input field
+	let projectSprints = props.getProjectSprints(currentProject)
 	const [currentSprintElapsedTime, setCurrentSprintElapsedTime] = useState<number>(0)
-	const [tasks, setTasks] = useState<TaskStatus[]>(props.projectSprints.map(item => {
+	const [lastUserAction, setLastUserAction] = useState<number>(new Date().getTime())
+	let history = useHistory();
+
+
+
+	const [tasks, setTasks] = useState<TaskStatus[]>(projectSprints.map(item => {
 		return {	
 			ID: item.ID, 
 			Status: TaskTimerStatus.WAS_NEVER_STARTED
 		}
 	}))
+
+
+
+
+	// Ensure that each sprint that goes on the display always as a corresponding task 
+	if(projectSprints.length !== tasks.length){
+		console.log(projectSprints, tasks)
+		let missingSprintIDs: number[] = []
+		let presentSprints: Sprint[] = []
+
+		// Search for sprints with no corresponding tasks
+		projectSprints.forEach(sprint => {
+			let isMissing = true
+			tasks.forEach(task => sprint.ID === task.ID && (isMissing = false) && presentSprints.push(sprint))
+			isMissing && (missingSprintIDs.push(sprint.ID))
+		})
+
+		// Add missing tasks for new sprints
+		setTasks(tasks => [...tasks, ...missingSprintIDs.map(id => {
+			return {
+				ID: id, 
+				Status: TaskTimerStatus.WAS_NEVER_STARTED
+			}
+		})])
+
+		// Prevent react errors while trying to access the new tasks 
+		// (these new tasks added above will only appear during the next re render)
+		projectSprints = [...presentSprints]
+	}
+
+
+
+
+
 	useEffect(()=>{
 		const interval = setInterval(()=>{
-			const currentSprint = props.getCurrentSprint()
+			// Get current sprint and if valid get its elpased time for later consumption
+			const {currentSprint} = props.getCurrentSprint()
 			if(currentSprint.ID > 0){
 				setCurrentSprintElapsedTime(props.getCurrentSprintElapsedTime())
+
+				if(new Date().getTime() - lastUserAction > 15*1000){
+					history.push('/summary')
+				}
 			}
 		}, 100)
 
-		return ()=>{clearInterval(interval); console.log('in Closing: ')}
-	}, [currentSprint.ID])
-
-
-
-
+		// When current sprint has changed, clean up effect and relaunch
+		return ()=>{clearInterval(interval)}
+	}, [currentSprint.ID, lastUserAction])
 
 
 
@@ -81,16 +130,16 @@ const TaskPage: React.FC<Props> = (props) => {
 
 		switch(action.toLowerCase()){
 			case 'start':
-				currentSprint.ID > 0 && props.handleSprintPause(props.projectName, currentSprint.ID)
+				currentSprint.ID > 0 && props.handleSprintPause(currentProject, currentSprint.ID)
 
 				let [task] = tasks.filter(task => task.ID === sprintID)
-				task.Status === TaskTimerStatus.WAS_NEVER_STARTED && props.handleSprintStart(props.projectName, sprintID)
-				task.Status === TaskTimerStatus.PAUSED && props.handleSprintResume(props.projectName, sprintID)
+				task.Status === TaskTimerStatus.WAS_NEVER_STARTED && props.handleSprintStart(currentProject, sprintID)
+				task.Status === TaskTimerStatus.PAUSED && props.handleSprintResume(currentProject, sprintID)
 
 				handleUIStart(sprintID)
 				break;
 			case 'pause':
-				props.handleSprintPause(props.projectName, sprintID)
+				props.handleSprintPause(currentProject, sprintID)
 				setTasks(tasks => tasks.map(task => {
 					return {	
 						ID: task.ID, 
@@ -112,9 +161,14 @@ const TaskPage: React.FC<Props> = (props) => {
 
 
 	return (
-		<div className="Page TaskPage">
-			<div className="Project-Name UnderlinedInput">
-				<input type="text" value={props.projectName} onChange={(evt)=>{}}/>
+		<div className="Page TaskPage" onClick={(evt) => setLastUserAction(new Date().getTime())}>
+			<div className={`Project-Name UnderlinedInput ${currentProject===''?'Project-Name--Empty':''}`}>
+				<input type="text" value={_currentProject===null ? currentProject : _currentProject} 
+							 onChange={(evt)=>{set_currentProject(evt.target.value)}} 
+							 onKeyDown={(evt)=>{
+								 evt.keyCode===13 && props.setCurrentSprint(_currentProject !== null ? _currentProject : '') && set_currentProject(null)
+							 }} 
+							 placeholder="What are you working on?"/>
 			</div>
       
 			<div className="Project-Timer">
@@ -124,42 +178,43 @@ const TaskPage: React.FC<Props> = (props) => {
 			
 			<div className="Project-Tasks">
 				{
-					props.projectSprints.length >= 0 && props.projectSprints.map((sprint, index) => {
-							return <Task key={sprint.ID}
-													sprint={(index + 1 === sprint.No ? true : props.handleDetailChanges(props.projectName, sprint.ID, {No: index}) || true) && sprint} 
-													active={sprint.ID === currentSprint.ID}
-													taskStatus={tasks[index].Status}
-													sprintElapsedTime={sprint.ID === currentSprint.ID ? currentSprintElapsedTime : props.getSprintElapsedTimeByID(props.projectName, sprint.ID) }
-													handleDetailsChange={(sprintID, changedDetails)=>{
-														//  if(changedDetails.DurationSec){
-														// 	 console.log('hello', sprint.DurationMs/1000, changedDetails.DurationSec, props.getSprintElapsedTimeByID(props.projectName, sprint.ID))
-														// 	changedDetails.DurationSec =  (sprint.DurationMs/1000)
-														// 																+ changedDetails.DurationSec 
-														// 																- props.getSprintElapsedTimeByID(props.projectName, sprint.ID)
-														//  }
-														props.handleDetailChanges(props.projectName, sprintID, changedDetails)
-													}}
-													handleSprintTimerAction={handleSprintTimerAction}
-													handleNewSprint={()=>{ 
-														let newSprint = props.handleNewSprint(props.projectName, {No: sprint.No + 1}); 
-														props.projectSprints.forEach(item => {
-															if(item.No > sprint.No){
-																props.handleDetailChanges(props.projectName, item.ID, {No: item.No + 1})
-															}
-														})
-														setTasks(tasks => [...tasks, {	
-															ID: newSprint.ID, 
-															Status: TaskTimerStatus.WAS_NEVER_STARTED
-														}])
-													}}/>
+					projectSprints.length >= 0 && projectSprints.map((sprint, index) => {
+							return sprint.ID>0 
+										&& <Task  key={sprint.ID}
+															sprint={(index + 1 === sprint.No ? true : props.handleDetailChanges(currentProject, sprint.ID, {No: index}) || true) && sprint} 
+															active={sprint.ID === currentSprint.ID}
+															taskStatus={tasks[index].Status}
+															sprintElapsedTime={sprint.ID === currentSprint.ID ? currentSprintElapsedTime : props.getSprintElapsedTimeByID(currentProject, sprint.ID) }
+															handleDetailsChange={(sprintID, changedDetails)=>{
+																//  if(changedDetails.DurationSec){
+																// 	 console.log('hello', sprint.DurationMs/1000, changedDetails.DurationSec, props.getSprintElapsedTimeByID(props.currentProject, sprint.ID))
+																// 	changedDetails.DurationSec =  (sprint.DurationMs/1000)
+																// 																+ changedDetails.DurationSec 
+																// 																- props.getSprintElapsedTimeByID(props.currentProject, sprint.ID)
+																//  }
+																props.handleDetailChanges(currentProject, sprintID, changedDetails)
+															}}
+															handleSprintTimerAction={handleSprintTimerAction}
+															handleNewSprint={()=>{ 
+																let newSprint = props.handleNewSprint(currentProject, {No: sprint.No + 1}); 
+																projectSprints.forEach(item => {
+																	if(item.No > sprint.No){
+																		props.handleDetailChanges(currentProject, item.ID, {No: item.No + 1})
+																	}
+																})
+																setTasks(tasks => [...tasks, {	
+																	ID: newSprint.ID, 
+																	Status: TaskTimerStatus.WAS_NEVER_STARTED
+																}])
+															}}/>
 						})
 						
 				}
 				{
-					props.projectSprints.length === 0 && (
+					projectSprints.length === 0 && (
 					<div className="Empty-Tasks">
 						<span onClick={(evt)=>{
-								let newSprint = props.handleNewSprint(props.projectName, {No: 1}); 
+								let newSprint = props.handleNewSprint(currentProject, {No: 1}); 
 								setTasks(tasks => [...tasks, {	
 										ID: newSprint.ID, 
 										Status: TaskTimerStatus.WAS_NEVER_STARTED
@@ -172,8 +227,33 @@ const TaskPage: React.FC<Props> = (props) => {
 			</div>
 
 			<div className="Project-Controls">
-				<div><div className="control-wrapper"><i className="fas fa-undo"></i></div></div>
-				<div><div className="control-wrapper"><i className="fas fa-stop"></i></div></div>
+
+				<div>
+					<div className="control-wrapper"
+							 onClick={(evt)=>{
+								projectSprints.length >= 0 && projectSprints.forEach(item => props.handleSprintReset(currentProject, item.ID))
+								setTasks(tasks => tasks.map(task => {
+									task.Status = TaskTimerStatus.WAS_NEVER_STARTED
+									return task
+								}))
+							 }}>
+						<i className="fas fa-undo"></i>
+					</div>
+				</div>
+
+				<div>
+					<div className="control-wrapper"
+							 onClick={(evt)=>{
+								projectSprints.length >= 0 && projectSprints.forEach(item => props.handleSprintStop(currentProject, item.ID))
+								setTasks(tasks => tasks.map(task => {
+									task.Status = TaskTimerStatus.WAS_NEVER_STARTED
+									return task
+								}))
+							 }}>
+						<i className="fas fa-stop"></i>
+					</div>
+				</div>
+
 			</div>
 
 
