@@ -3,10 +3,7 @@ import {Switch, Route} from 'react-router-dom';
 import controller from './controller'
 import './App.css';
 
-
-// import Timer from './components/Timer/Timer'
-import TaskPage from './components/TaskPage/TaskPage'
-import SummaryPage from './components/SummaryPage/SummaryPage'
+import MainUI from './components/MainUI/MainUI';
 
 declare global {
     interface Window {
@@ -87,36 +84,10 @@ const App: React.FC = () => {
 		<div className="App">
             <Switch>
                 <Route exact path='/' render={(props:any) => 
-                    <div>
-                        <TaskPage getProjects={controller.getProjectsName} 
-                                    getProjectSprints={controller.getProjectWithName} 
-                                    handleSprintStart={controller.startSprintOnPrjectWithName}
-                                    handleSprintPause={controller.pauseSprintOnPrjectWithName}
-                                    handleSprintResume={controller.resumeSprintOnPrjectWithName}
-                                    handleSprintReset={controller.resetSprintOnPrjectWithName}
-                                    handleSprintStop={controller.stopSprintOnPrjectWithName}
-                                    getCurrentSprintElapsedTime={controller.getCurrentSprintElapsedTime}
-                                    getSprintElapsedTimeByID={controller.getSprintElapsedTimeOnPrjectWithName}
-                                    getCurrentSprint={controller.getCurrentSprint}
-                                    setCurrentSprint={controller.setCurrentSprint}
-                                    handleNewSprint={(projectName)=>{
-                                        setReRenderer(reRenderer=>!reRenderer)
-                                        return controller.createSprintOnProjectWithName(projectName)
-                                    }}
-                                    handleDetailChanges={(projectName, sprintID, changedDetails) => {
-                                        setReRenderer(reRenderer=>!reRenderer)
-                                        return controller.setSprintOnProjectWithName(projectName, sprintID, changedDetails)
-                                    }}/> 
-                    </div>
-                }/>
-                <Route exact path='/summary'  render={(props) => 
-                    <div>
-                        <SummaryPage getCurrentSprint={controller.getCurrentSprint}
-                                    setCurrentSprint={controller.setCurrentSprint}
-                                    getProjects={controller.getProjectsName} 
-                                    getProjectSprints={controller.getProjectWithName} 
-                                    onMouseAtBorders={handleResize} 
-                                    getCurrentSprintElapsedTime={controller.getCurrentSprintElapsedTime}/>
+                    <div className="draggable">
+                        <MainUI onMouseLeave={()=>{}} 
+                                onMouseEnter={()=>{}}
+                                onOpenPaneTrigger={()=>{}}/> 
                     </div>
                 }/>
                 {/* <Route component={Default}></Route> */}
