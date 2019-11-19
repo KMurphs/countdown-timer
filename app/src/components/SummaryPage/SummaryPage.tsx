@@ -47,12 +47,15 @@ const SummaryPage: React.FC<Props> = (props) => {
 
 			<div className={`Project-Container UnderlinedInput`}>
 				<div className={`Project-Name `}>
-					<input type="text" value={_currentProject===null ? currentProject : _currentProject} 
+					{/* <input type="text" value={_currentProject===null ? currentProject : _currentProject} 
 								onChange={(evt)=>{set_currentProject(evt.target.value)}} 
 								onKeyDown={(evt)=>{
 									evt.keyCode===13 && props.setCurrentSprint(_currentProject !== null ? _currentProject : '') && set_currentProject(null)
 								}} 
-								placeholder="What are you working on?"/>
+								placeholder="What are you working on?"/> */}
+				<Input_WithAutoComplete initialContent='blabla' 
+															  onFieldHandleChange={(newValue)=>console.log(newValue)}
+																getAutoCompleteItemsLike={()=>countries/*props.getProjectSprints(currentProject).map(item => item.Name)*/}/>
 				</div>
 
 				<div className="Project-Timer">
