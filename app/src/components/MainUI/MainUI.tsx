@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './MainUI.css';
 
-import { Sprint } from '../../model/model';
+import { Sprint, SprintStatus } from '../../model/model';
 import TimerLong from '../Timer/TimerLong';
 import { getLongDisplay } from '../Timer/CountDownFormat';
 import CollapsableProject from '../CollapsableContainer/CollapsableProject';
@@ -41,6 +41,20 @@ type Props = {
 }
 
 const MainUI: React.FC<Props> = (props) => {
+
+	const [forceReRender, setForceReRender] = useState<boolean>(false)
+	const [typedProject, setTypedProject] = useState<string>('')
+	const [typedTask, setTypedTask] = useState<string>('')
+	const [currentSprintElapsedTime, setCurrentSprintElapsedTime] = useState<number>(0)
+
+
+
+	let {currentSprint, currentProject} = props.getCurrentSprint()
+	let projects = props.getProjects()
+	const doesStringContainToken = (string: string, token: string) => string.toLowerCase().indexOf(token.toLowerCase()) !== -1
+
+
+
 
 	const [isPaneOpened, setIsPaneOpened] = useState<boolean>(false)
 	const [paneWillCloseInNSecs, setPaneWillCloseInNSecs] = useState<number|null>(0)
@@ -86,22 +100,7 @@ const MainUI: React.FC<Props> = (props) => {
 	}, [isControlsOpened, controlsWillCloseInNSecs])
 
 
-
-
-
-
-	const [forceReRender, setForceReRender] = useState<boolean>(false)
-	const [typedProject, setTypedProject] = useState<string>('')
-	const [typedTask, setTypedTask] = useState<string>('')
-	const doesStringContainToken = (string: string, token: string) => string.toLowerCase().indexOf(token.toLowerCase()) !== -1
-	let {currentSprint, currentProject} = props.getCurrentSprint()
-
-	let projects = props.getProjects()
-	// console.log(projects)
-	// projects.forEach(project => console.log(props.getProjectWithName(project)))
-
-
-	const [currentSprintElapsedTime, setCurrentSprintElapsedTime] = useState<number>(0)
+	
 	useEffect(()=>{
 		const interval = setInterval(()=>{
 			// Get current sprint and if valid get its elpased time for later consumption
@@ -123,14 +122,31 @@ const MainUI: React.FC<Props> = (props) => {
 
 
 
+	const handlePlayNext = ()=>{
+		let nextSprint = props.getProjectWithName(currentProject).sort((a,b) => a.No-b.No).filter(task => (task.No === currentSprint.No + 1 && task.Status !== SprintStatus.COMPLETED))[0]
+		nextSprint && nextSprint.Status === SprintStatus.SCHEDULED && props.startSprintOnPrjectWithName(currentProject, nextSprint.ID)
+		nextSprint && nextSprint.Status === SprintStatus.PAUSED && props.resumeSprintOnPrjectWithName(currentProject, nextSprint.ID)
+	}
+	const handlePlayPrevious = ()=>{
+		let previousSprint = props.getProjectWithName(currentProject).sort((a,b) => a.No-b.No).filter(task => (task.No === currentSprint.No - 1 && task.Status !== SprintStatus.COMPLETED))[0]
+		previousSprint && previousSprint.Status === SprintStatus.SCHEDULED && props.startSprintOnPrjectWithName(currentProject, previousSprint.ID)
+		previousSprint && previousSprint.Status === SprintStatus.PAUSED && props.resumeSprintOnPrjectWithName(currentProject, previousSprint.ID)
+	}
+	const handleResetTasks = () => props.getProjectWithName(currentProject).forEach(task => props.resetSprintOnPrjectWithName(currentProject, task.ID))
 
-	// const [openedProjectPane, setOpenProjectPane] = useState<string>('')
+	
+
+
+
+
+
+
 
 	return (
 		<div className="MainUI non-draggable" 
 				 onClick={()=>{}} 
 				 onMouseLeave={(evt)=>{
-					 setPaneWillCloseInNSecs(2)
+					//  setPaneWillCloseInNSecs(2)
 					 setControlsWillCloseInNSecs(.5)
 				 }} 
 				 onMouseEnter={(evt)=>{
@@ -140,15 +156,15 @@ const MainUI: React.FC<Props> = (props) => {
 
 
 
+
+
+
 				<div className="content-wrapper draggable">
 					<div className="content-wrapper-inner">
 						<div className='drag-handle'></div>
 						<div className="content">
 
 								<div className="input-wrapper non-draggable">
-									{/* <input type="text" placeholder={`Your Task from ${currentProject===''?'some':''} project ${currentProject}`} 
-												value={ typedTask }
-												onChange={(evt)=>setTypedTask(evt.target.value)}/> */}
 									<Input_WithAutoComplete initialContent={typedTask} 
 																					onFieldHandleChange={(newValue)=>setTypedTask(newValue)} 
 																					getAutoCompleteItemsLike={(like)=>{
@@ -163,7 +179,7 @@ const MainUI: React.FC<Props> = (props) => {
 								</div>
 								
 								<div className="current-details non-draggable">
-										<span>(Project: </span>
+										<span>Project: </span>
 										<span>
 													{ 
 															currentProject===''
@@ -173,7 +189,7 @@ const MainUI: React.FC<Props> = (props) => {
 															:currentProject
 													}
 										</span>
-										<span>)</span>
+										<span></span>
 										<span className={'current-details_edit'} onClick={(evt)=>setIsPaneOpened(true)}><i className="fas fa-pen"></i></span>	
 								</div>
 
@@ -183,15 +199,30 @@ const MainUI: React.FC<Props> = (props) => {
 				
 				
 
-				<div className={`non-draggable`}>
+
+
+
+				<div className={`non-draggable ${currentProject === ''?'not-displayed':''}`}>
 					<TimerControls mustbeVisible={isControlsOpened}
-												 handleStop={()=>{}}
-												 handleBack={()=>{}}
-											   handlePlayPause={()=>{}}
-												 handleNext={()=>{}}
-												 handleComplete={()=>{}}/>
+												 handleReset={handleResetTasks}
+												 handlePrevious={handlePlayPrevious}
+											   handlePlayPause={(mode:string)=> {
+														mode.toLowerCase() === 'play' 
+														? currentSprint.Status === SprintStatus.PAUSED 
+															? props.resumeCurrentSprint() 
+															: props.startSprintOnPrjectWithName(currentProject, props.getProjectWithName(currentProject).filter(task => task.Name === typedTask)[0].ID)
+														: props.pauseCurrentSprint()
+												 }}
+												 handleNext={handlePlayNext}
+												 handleComplete={props.stopCurrentSprint}/>
 				</div>
 				
+
+
+
+
+
+
 				
 				
 				<div className={`non-draggable content-detailed ${isPaneOpened?'content-detailed--visible':''}`}>
@@ -203,10 +234,10 @@ const MainUI: React.FC<Props> = (props) => {
 							return (
 								doesStringContainToken(project, typedProject)
 								? <CollapsableProject project={project}
-																			isPaneOpened={project===typedProject} 
+																			isProjectSelected={project===typedProject} 
 																			typedTask={typedTask}
 																			onTypedTask={(typedTask)=>setTypedTask(typedTask)}
-																			onOpeningPane={project => {
+																			onProjectSelected={project => {
 																				setTypedProject(typedProject===project ? '' : project)
 																				props.setCurrentSprint(typedProject===project ? '' : project)
 																			}} 
@@ -219,12 +250,22 @@ const MainUI: React.FC<Props> = (props) => {
 																			stopSprintOnPrjectWithName={props.stopSprintOnPrjectWithName}
 																			resetSprintOnPrjectWithName={props.resetSprintOnPrjectWithName}
 																			getSprintElapsedTimeOnPrjectWithName={props.getSprintElapsedTimeOnPrjectWithName} 
+																			onPlayPreviousTask={handlePlayPrevious}
+																			onPlayNextTask={handlePlayNext}
+																			onResetProjectTasks={handleResetTasks}
 																			key={index} />
 								: <div key={index}></div> 
 							)
 						}) 
 					}
 				</div>
+
+
+
+
+
+
+
 
 
 		</div>

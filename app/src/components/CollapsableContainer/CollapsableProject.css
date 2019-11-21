@@ -83,3 +83,7 @@
     background: rgba(127, 0, 0, 0.2);
     transition: all .6s;
 }
+
+.CollapsableContainer .collapse-header {
+    grid-template-columns: 10px 1fr 30px;
+}

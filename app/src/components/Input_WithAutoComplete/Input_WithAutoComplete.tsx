@@ -168,7 +168,7 @@ const Input_WithAutoComplete: React.FC<Props> = (props) => {
               placeholder={fieldTexts.placeholder}  
               pattern={fieldPattern}  
               onChange={(evt)=>{setContent(evt.target.value);/*fieldHandleChange(evt.target.value)*/}} 
-              onBlur={(evt)=>{setIsBeingWrittenTo(false)}}
+              // onBlur={(evt)=>{setIsBeingWrittenTo(false)}}
               value={content}
               autoComplete="off"
               onKeyDown={handleAutocompleteKeyDown}
@@ -182,7 +182,7 @@ const Input_WithAutoComplete: React.FC<Props> = (props) => {
             return (
               <div  key={index}
                     className={`${index===autoCompleteItemsCounter?'autocomplete-active':''}`}
-                    onClick={(evt)=>{ setContent(item); setIsBeingWrittenTo(false) }}> 
+                    onClick={(evt)=>{ setContent(item); setIsBeingWrittenTo(false); console.log('clicked') }}> 
                 {item.substr(0, substrIndex)}<strong>{content}</strong>{item.substr(substrIndex + content.length)}
               </div>
             )

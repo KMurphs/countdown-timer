@@ -20,16 +20,20 @@ type TaskProps = {
 	resumeTask: () => Sprint,
 	stopTask: () => Sprint,
 	resetTask: () => Sprint,
+
+	playPreviousTask: ()=>void,
+	playNextTask: ()=>void,
+	resetProjectTasks: ()=>void,
 }
 type Props = {
 	project: string,
 
-	isPaneOpened: boolean,
-	onOpeningPane: (projectName: string)=>void
+	isProjectSelected: boolean,
+	onProjectSelected: (projectName: string)=>void
 
 	typedTask: string,
 	onTypedTask: (typedTask: string)=>void
-	
+
 	getProjectTasks: (projectName: string)=>Sprint[],
 	setSprintOnProjectWithName: (projectName: string, sprintID: number, sprintDetails?: {[key: string]: any}) => Sprint | null,
 	createSprintOnProjectWithName: (projectName: string, sprintDetails?: {[key: string]: any}) => Sprint | null,
@@ -40,11 +44,18 @@ type Props = {
 	resumeSprintOnPrjectWithName: (projectName: string, sprintID: number) => Sprint,
 	stopSprintOnPrjectWithName: (projectName: string, sprintID: number) => Sprint,
 	resetSprintOnPrjectWithName: (projectName: string, sprintID: number) => Sprint,
+
+
+	onPlayPreviousTask: () => void,
+	onPlayNextTask: () => void,
+	onResetProjectTasks: () => void,
 }
+
+
 
 const CollapsableProject: React.FC<Props> = (props) => {
 
-	// const [isPaneOpened, setIsPaneOpened] = useState<boolean>(false)
+	const [isPaneOpened, setIsPaneOpened] = useState<boolean>(false)
 
 	let project: string = props.project
 	let tasks: Array<Sprint> = props.getProjectTasks(project)
@@ -76,12 +87,15 @@ const CollapsableProject: React.FC<Props> = (props) => {
 	return (
 		<div className="CollapsableContainer">
 
-			<div className="collapse-header" onClick={(evt)=>props.onOpeningPane(project)}>
-				<div className={`collapse-indicator ${props.isPaneOpened?'collapse-indicator--opened':''}`}><i className="fas fa-caret-right"></i></div>
+			<div className="collapse-header" onClick={(evt)=> setIsPaneOpened(isPaneOpened=>!isPaneOpened)}>
+				
+				<div className={`collapse-indicator ${isPaneOpened?'collapse-indicator--opened':''}`}><i className="fas fa-caret-right"></i></div>
 				<div className='collapse-header-text'>{project}</div>
+				<div><input type="checkbox" checked={props.isProjectSelected} onChange={(evt) => props.onProjectSelected(project)} onClick={evt => evt.stopPropagation()}/></div>
+
 			</div>
 
-			<div className={`collapse-body ${props.isPaneOpened?'collapse-body--opened':''}`}>
+			<div className={`collapse-body ${isPaneOpened?'collapse-body--opened':''}`}>
 				<AddEntry onChange={typedTask => props.onTypedTask(typedTask)} 
 									onAdd={typedTask=> (typedTask !== '') && (tasksNames.indexOf(typedTask) === -1) && handleTaskCreation(typedTask)} 
 									placeholder='Enter a Task or Add a New One'/>
@@ -96,6 +110,9 @@ const CollapsableProject: React.FC<Props> = (props) => {
 														setForceReRender(forceReRender=>!forceReRender)
 														return props.setSprintOnProjectWithName(project, task.ID, updatedTaskDetails)
 													}}
+													playPreviousTask={props.onPlayPreviousTask}
+													playNextTask={props.onPlayNextTask}
+													resetProjectTasks={props.onResetProjectTasks}
 													startTask={()=>{setForceReRender(forceReRender=>!forceReRender); return props.startSprintOnPrjectWithName(project, task.ID)}}
 													pauseTask={()=>{setForceReRender(forceReRender=>!forceReRender); return props.pauseSprintOnPrjectWithName(project, task.ID)}}
 													resumeTask={()=>{setForceReRender(forceReRender=>!forceReRender); return props.resumeSprintOnPrjectWithName(project, task.ID)}}
@@ -152,15 +169,15 @@ const Task: React.FC<TaskProps> = (props) => {
 						</div>
 						<div className="task-controls-wrapper">
 							<TimerControls mustbeVisible={true} 
-														 handleStop={props.stopTask}
-														 handleBack={()=>{}}
+														 handleReset={props.resetProjectTasks}
+														 handlePrevious={props.playPreviousTask}
 														 handlePlayPause={(mode:string)=> {
 															 mode.toLowerCase() === 'play' 
 															 ? props.data.Status === SprintStatus.PAUSED ? props.resumeTask() : props.startTask()
 															 : props.pauseTask()
 														 }}
-														 handleNext={()=>{}}
-														 handleComplete={()=>{}}
+														 handleNext={props.playNextTask}
+														 handleComplete={props.stopTask}
 														 alternativeModel={true}/>
 						</div>
 				</div>

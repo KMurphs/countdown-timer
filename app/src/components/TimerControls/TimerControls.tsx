@@ -11,8 +11,8 @@ enum PLAYMODE{
 
 type Props = {
 	mustbeVisible: boolean,
-	handleStop: ()=>void,
-	handleBack: ()=>void,
+	handleReset: ()=>void,
+	handlePrevious: ()=>void,
 	handlePlayPause: (mode: string)=>void,
 	handleNext: ()=>void,
 	handleComplete: ()=>void,
@@ -27,21 +27,29 @@ const TimerControls: React.FC<Props> = (props) => {
 		!isDisplayingPlay && props.handlePlayPause(PLAYMODE[PLAYMODE.PAUSE])
 		setIsDisplayingPlay(isDisplayingPlay=>!isDisplayingPlay)
 	}
+	const handlePlayNext = ()=>{
+		!isDisplayingPlay && handlePlayPause();
+		props.handleNext();
+	}
+	const handlePlayPrevious = ()=>{
+		!isDisplayingPlay && handlePlayPause();
+		props.handlePrevious();
+	}
 
 	return (
 		!(props.alternativeModel)
 		?	<div className={`controls-wrapper ${props.mustbeVisible?'controls-wrapper--visible':''}`}>
-				<div onClick={(evt)=>props.handleStop()}><i className="fas fa-stop"></i></div>
-				<div onClick={(evt)=>props.handleBack()}><i className="fas fa-backward"></i></div>
+				<div onClick={(evt)=>props.handleReset()}><i className="fas fa-redo"></i></div>
+				<div onClick={(evt)=>handlePlayPrevious()}><i className="fas fa-backward"></i></div>
 				<div onClick={(evt)=>handlePlayPause()}><i className={`fas ${isDisplayingPlay?'fa-play':'fa-pause'}`}></i></div>
-				<div onClick={(evt)=>props.handleNext()}><i className="fas fa-forward"></i></div>
+				<div onClick={(evt)=>handlePlayNext()}><i className="fas fa-forward"></i></div>
 				<div onClick={(evt)=>props.handleComplete()}><i className="fas fa-check"></i></div>
 			</div>
 		:	<div className={`controls-wrapper ${props.mustbeVisible?'controls-wrapper--visible':''}`}>
-			<div onClick={(evt)=>props.handleBack()}><i className="fas fa-backward"></i></div>
+			<div onClick={(evt)=>handlePlayPrevious()}><i className="fas fa-backward"></i></div>
 			<div onClick={(evt)=>handlePlayPause()}><i className={`fas ${isDisplayingPlay?'fa-play':'fa-pause'}`}></i></div>
-			<div onClick={(evt)=>props.handleNext()}><i className="fas fa-forward"></i></div>
-			<div onClick={(evt)=>props.handleStop()}><i className="fas fa-stop"></i></div>
+			<div onClick={(evt)=>handlePlayNext()}><i className="fas fa-forward"></i></div>
+			<div onClick={(evt)=>props.handleReset()}><i className="fas fa-redo"></i></div>
 		</div>
 	);
 
