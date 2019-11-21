@@ -84,11 +84,23 @@ const App: React.FC = () => {
 		<div className="App">
             <Switch>
                 <Route exact path='/' render={(props:any) => 
-                    <div className="draggable">
-                        <MainUI onMouseLeave={()=>{}} 
-                                onMouseEnter={()=>{}}
-                                onOpenPaneTrigger={()=>{}}/> 
-                    </div>
+                    <MainUI getCurrentSprint={controller.getCurrentSprint}
+                            setCurrentSprint={controller.setCurrentSprint}
+                            pauseCurrentSprint={controller.pauseCurrentSprint}
+                            resumeCurrentSprint={controller.resumeCurrentSprint}
+                            stopCurrentSprint={controller.stopCurrentSprint}
+                            getCurrentSprintElapsedTime={controller.getCurrentSprintElapsedTime}
+                            getProjects={controller.getProjectsName}
+                            getProjectWithName={controller.getProjectWithName}
+                            createSprintOnProjectWithName={controller.createSprintOnProjectWithName}
+                            setSprintOnProjectWithName={controller.setSprintOnProjectWithName}
+                            startSprintOnPrjectWithName={controller.startSprintOnPrjectWithName}
+                            pauseSprintOnPrjectWithName={controller.pauseSprintOnPrjectWithName}
+                            resumeSprintOnPrjectWithName={controller.resumeSprintOnPrjectWithName}
+                            stopSprintOnPrjectWithName={controller.stopSprintOnPrjectWithName}
+                            resetSprintOnPrjectWithName={controller.resetSprintOnPrjectWithName}
+                            getSprintElapsedTimeOnPrjectWithName={controller.getSprintElapsedTimeOnPrjectWithName}
+                    /> 
                 }/>
                 {/* <Route component={Default}></Route> */}
             </Switch>

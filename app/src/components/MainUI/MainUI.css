@@ -1,14 +1,23 @@
 .MainUI {
     --handle-width: .5em;
     position: relative;
+    max-height: 270px;
+    overflow-y: auto;
 }
 
 .MainUI .content-wrapper {
     --handle-width: .5em;
     min-height: 50px;
     height: 50px;
-    background: rgba(0, 0, 0, 0.5);
+    /* background: rgba(0, 0, 0, 0.5); */
     position: relative;
+}
+
+.MainUI .content-wrapper-inner {
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    position: 'fixed';
+    width: 100%;
 }
 
 .MainUI .drag-handle {
@@ -36,13 +45,18 @@
 }
 
 .MainUI .content-detailed {
-    position: absolute;
-    top: 100%;
-    right: 0;
-    left: 0;
+    /* position: absolute; */
+    /* top: 100%; */
+    /* right: 0; */
+    /* left: 0; */
     height: 150px;
-    background: rgba(0, 0, 0, 0.2);
+    /* background: rgba(0, 0, 0, 0.2); */
     display: none;
+    color: #333;
+}
+
+.MainUI .content-detailed * {
+    color: #333;
 }
 
 .MainUI .current-details {
@@ -51,20 +65,39 @@
     margin-left: .5em;
 }
 
+.MainUI .current-details:hover .current-details_edit {
+    opacity: 1;
+    transition: all .6s;
+}
+
+.MainUI .current-details .current-details_edit {
+    background: rgba(0, 0, 0, 0.2);
+    padding: .2em .3em;
+    border-radius: 3px;
+    margin-left: .5em;
+    cursor: pointer;
+    opacity: .2;
+    transition: all .6s;
+}
+
 .MainUI .content-detailed--visible {
     display: block;
 }
 
-.MainUI .content .input-wrapper {
+
+/*Input Wrapper*/
+
+.MainUI .input-wrapper {
     position: relative;
     width: 100%;
     display: flex;
     flex-direction: column;
     align-items: stretch;
+    color: #333;
 }
 
-.MainUI .content .input-wrapper::before,
-.MainUI .content .input-wrapper::after {
+.MainUI .input-wrapper::before,
+.MainUI .input-wrapper::after {
     content: '';
     position: absolute;
     bottom: 0;
@@ -76,21 +109,24 @@
     transition: all .3s;
 }
 
-.MainUI .content .input-wrapper::after {
+.MainUI .input-wrapper::after {
     background: white;
     transform: scaleX(0);
 }
 
-.MainUI .content .input-wrapper:hover::after {
+.MainUI .input-wrapper:hover::after {
     transition: all .3s;
     transform: scaleX(1);
 }
 
-.MainUI .content input:hover {
+.MainUI input:hover {
     background: rgba(0, 0, 0, 0.2);
 }
 
-.MainUI .content .timer-wrapper {
+
+/*Input Wrapper End*/
+
+.MainUI .timer-wrapper {
     margin-left: .2em;
     width: calc(100% - .2em);
     background: rgba(0, 0, 0, 00.1);
@@ -122,11 +158,12 @@
     opacity: 0;
 }
 
-.MainUI:hover .controls-wrapper div {
+
+/* .MainUI:hover .controls-wrapper div {
     margin-top: 0;
     opacity: 1;
     transition: all .6s;
-}
+} */
 
 .MainUI .controls-wrapper div:hover {
     background: rgba(0, 0, 0, 0.2);
@@ -135,4 +172,50 @@
 
 .MainUI .controls-wrapper--visible {
     background: rgba(0, 0, 0, 0.2);
+}
+
+.MainUI .controls-wrapper--visible div {
+    margin-top: 0;
+    opacity: 1;
+    transition: all .6s;
+}
+
+.MainUI .add-project {
+    background: rgba(0, 0, 0, 0.1);
+    position: relative;
+    padding: .2em .5em;
+    display: grid;
+    grid-template-columns: 28px 1fr;
+    cursor: pointer;
+}
+
+.MainUI .add-project:after {
+    content: '';
+    background: transparent;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-right: 0;
+    border-left: 0;
+    position: absolute;
+    right: 0;
+    left: 0;
+    bottom: -3px;
+    height: 2px;
+    transform: scaleX(.96);
+}
+
+.MainUI .add-project div:first-child {
+    background: rgba(0, 0, 0, 0.2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+    border-radius: 3px;
+}
+
+.MainUI .add-project div:first-child:hover {
+    background: rgba(0, 0, 0, 0.3);
+}
+
+.MainUI .add-project i {
+    color: #eee;
 }

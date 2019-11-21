@@ -54,6 +54,7 @@ let controller = {
               break
             case 'Name':
                   sprintWithGivenID.Name = sprintDetails.Name && typeof sprintDetails.Name === 'string' ? sprintDetails.Name : `Sprint ${tmpPosition}`
+                  sprintDetails.Name === '' && (sprintWithGivenID.Name = '')
                 break
             case 'No':
                 sprintWithGivenID.No = sprintDetails.No && typeof sprintDetails.No === 'number' ? sprintDetails.No :  tmpPosition

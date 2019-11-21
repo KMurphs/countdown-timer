@@ -3,7 +3,7 @@ import './TimerDisplay.css';
 import {padWithZeros} from './CountDownFormat'
 
 type TimeObject = {
-  isNeg: boolean;
+  isNegative: boolean;
   hours: number;
   minutes: number;
   seconds: number;
@@ -30,15 +30,15 @@ const TimerDisplay: React.FC<Props> = (props) => {
 
 	return (
 		<div className={`Timer-Display ${props.useTextSeparator? 'Timer-Display--align-right' : 'Timer-Display--normal'}`} id="Timer-Display">
-      <span>{props.timeObj.isNeg?'-':' '}</span>
+      <span style={{fontSize: '1em'}}>{props.timeObj.isNegative?'-':' '}</span>
       <span>
         <input  type="number" placeholder="00" id="hours" name="hours"
                 value={padWithZeros(props.timeObj.hours+'', 2)} 
                 disabled={!props.editable}
                 onChange={(evt)=>onTimeChange('hours', parseFloat(evt.target.value))} 
-                className={`timer-component ${props.timeObj.hours===0?'timer-component--hidden':''}`}/>
+                className={`timer-component ${props.timeObj.hours===0?'timer-component--hidden':''} ${props.timeObj.hours===0 && props.editable===false?'timer-component--removed':''}`}/>
       </span>
-      <span className={`timer-component timer-separator ${props.timeObj.hours===0?'timer-component--hidden':''}`}>{(props.useTextSeparator?'h':':')}</span>
+      <span className={`timer-component timer-separator ${props.timeObj.hours===0?'timer-component--hidden':''}  ${props.timeObj.hours===0 && props.editable===false?'timer-component--removed':''}`}>{(props.useTextSeparator?'h':':')}</span>
       <span>
         <input  type="number" placeholder="00" id="minutes" name="minutes"
                 value={padWithZeros(props.timeObj.minutes+'', 2)}

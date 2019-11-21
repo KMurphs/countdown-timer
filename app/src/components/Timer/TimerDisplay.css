@@ -25,6 +25,10 @@
     transition: all .6s;
 }
 
+#Timer-Display .timer-component--removed {
+    width: 0 !important;
+}
+
 .Timer-Display span {
     margin: 0 .1em;
     display: inline-block;
@@ -34,6 +38,7 @@
     padding-left: 0;
     padding-right: 0;
     width: 1.3em;
+    text-align: center;
 }
 
 #Timer-Display.Timer-Display .timer-component-seconds {

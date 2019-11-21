@@ -69,12 +69,12 @@ In other words it's impossible with pure CSS. */
     transition: all .2s;
 }
 
-.App .non-draggable,
-.App .non-draggable * {
+.App .non-draggable {
+    /* .App .non-draggable * { */
     -webkit-app-region: no-drag !important;
 }
 
-.App .draggable,
-.App .draggable * {
+.App .draggable {
+    /* .App .draggable * { */
     -webkit-app-region: drag;
 }

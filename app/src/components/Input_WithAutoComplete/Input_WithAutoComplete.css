@@ -1,6 +1,11 @@
 .input-group-no-borders.autocomplete {
     position: relative;
     display: inline-block;
+    width: 100%;
+    display: flex;
+    align-items: stretch;
+    flex-direction: column;
+    z-index: 10000;
 }
 
 .input-group-no-borders.autocomplete .autocomplete-items {
@@ -8,7 +13,7 @@
     /* border: 1px solid #d4d4d4; */
     border-bottom: none;
     border-top: none;
-    z-index: 99;
+    z-index: 10000;
     /*position the autocomplete items to be the same width as the container:*/
     top: 100%;
     left: 0;

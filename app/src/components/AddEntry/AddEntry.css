@@ -1,0 +1,61 @@
+.add-entry {
+    background: transparent;
+    position: relative;
+    padding: .2em .5em;
+    display: grid;
+    grid-template-columns: 28px 1fr;
+    cursor: pointer;
+    border-radius: 3px;
+    opacity: .2;
+    transition: all .6s;
+}
+
+.add-entry:hover {
+    background: transparent;
+    position: relative;
+    padding: .2em .5em;
+    display: grid;
+    grid-template-columns: 28px 1fr;
+    cursor: pointer;
+    border-radius: 3px;
+    opacity: 1;
+    transition: all .6s;
+}
+
+.add-entry:after {
+    content: '';
+    background: transparent;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-right: 0;
+    border-left: 0;
+    border-bottom: 0;
+    position: absolute;
+    right: 0;
+    left: 0;
+    bottom: -3px;
+    height: 2px;
+    transform: scaleX(.96);
+}
+
+.add-entry div:first-child {
+    background: rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+    border-radius: 3px;
+    transition: all .6s;
+}
+
+.add-entry div:first-child:hover {
+    background: rgba(0, 0, 0, 0.2);
+    transition: all .6s;
+}
+
+.add-entry i {
+    color: #eee;
+}
+
+.add-entry input {
+    color: #000;
+}

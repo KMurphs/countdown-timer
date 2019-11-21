@@ -52,10 +52,10 @@ const TaskStatus: React.FC<Props> = (props) => {
 				(status === Status.PAUSED && (<i className="fas fa-pause-circle"></i>)) ||
 				(status === Status.COMPLETED && (<i className="fas fa-check"></i>)) ||
 				(status === Status.EXECUTING && (
-					<svg>
+					<svg width="24px" height="24px">
 						<path id="arc" fill="white" stroke="white" strokeWidth="0" 
-								  d={describeArc(30, 75, 10, 0, props.percentage > 0 && props.percentage < 100 ? 3.59 * props.percentage : 0)}/>
-						<circle cx="30" cy="75" r="10" stroke="gray" strokeWidth="1" fill="rgba(0,0,0,0)"/>
+								  d={describeArc(10, 12, 8, 0, props.percentage > 0 && props.percentage < 100 ? 3.59 * props.percentage : 0)}/>
+						<circle cx="10" cy="12" r="8" stroke="gray" strokeWidth="1" fill="rgba(0,0,0,0)"/>
 					</svg>
 				)) 
 			}

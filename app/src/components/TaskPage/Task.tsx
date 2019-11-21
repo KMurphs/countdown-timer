@@ -50,10 +50,10 @@ const Task: React.FC<Props> = (props) => {
 
 
 				<div className="Task-Duration">
-					<TimerDisplay timeObj={{isNeg: timeObj.isNegative, hours: timeObj.hours, minutes: timeObj.minutes, seconds: timeObj.seconds}} 
+					<TimerDisplay timeObj={timeObj} 
 												useTextSeparator={false} 
 												editable={props.taskStatus !== TaskTimerStatus.STARTED}
-												handleTimeChange={(newDurationSec)=>props.handleDetailsChange(props.sprint.ID, {'DurationSec': newDurationSec})}/>
+												handleTimeChange={(newDurationSec)=>props.handleDetailsChange(props.sprint.ID, {'DurationSec': newDurationSec})}/> 
 				</div>
 
 

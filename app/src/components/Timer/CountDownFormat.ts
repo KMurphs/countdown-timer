@@ -33,16 +33,16 @@ const getSignificantDisplay = (countdownValueSec: number, decimalSeparator: stri
   return `${timeObj.isNegative?'-':''}${display}`
 }
 
-const getLongDisplay = (countdownValueSec: number, useTextSeparator: boolean = false, decimalSeparator: string = '.'):string => {
+const getLongDisplay = (countdownValueSec: number, useTextSeparator: boolean = false, decimalSeparator: string = '.', displayDecimal: boolean = true):string => {
 
   let timeObj: TimeComponents = parseTimeValue(countdownValueSec)
   let hoursSeparator = useTextSeparator ? 'H' : ':'
   let minsSeparator = useTextSeparator ? 'MIN' : ':'
 
-  return `${timeObj.isNegative?'-' : ''
+  return `${timeObj.isNegative?'- ' : ''
           }${timeObj.hours>0 ? timeObj.hours+hoursSeparator : ''
           }${timeObj.minutes>0 || timeObj.hours>0?padWithZeros(timeObj.minutes.toString(), 2)+minsSeparator : ''
-          }${padWithZeros(timeObj.seconds.toFixed(2), 2)}`
+          }${padWithZeros(displayDecimal ? timeObj.seconds.toFixed(2): timeObj.seconds.toFixed(0), 2)}`
 }
 
 
