@@ -83,15 +83,22 @@ const CollapsableProject: React.FC<Props> = (props) => {
 		tasks.forEach((task, index) => reorderTask(task.ID, index+2))
 		return createNewTask(newTask)
 	}
+	const handleProjectSelection = ()=> { 
+		setIsPaneOpened(!props.isProjectSelected); 
+		props.onProjectSelected(project)
+	}
 
 	return (
 		<div className="CollapsableContainer">
 
-			<div className="collapse-header" onClick={(evt)=> setIsPaneOpened(isPaneOpened=>!isPaneOpened)}>
+			<div className="collapse-header" onClick={(evt)=>handleProjectSelection()}>
 				
-				<div className={`collapse-indicator ${isPaneOpened?'collapse-indicator--opened':''}`}><i className="fas fa-caret-right"></i></div>
+				<div className={`collapse-indicator ${isPaneOpened?'collapse-indicator--opened':''}`} 
+						 onClick={(evt)=> {setIsPaneOpened(isPaneOpened=>!isPaneOpened); evt.stopPropagation()}}>
+							 <i className="fas fa-caret-right"></i>
+				</div>
 				<div className='collapse-header-text'>{project}</div>
-				<div><input type="checkbox" checked={props.isProjectSelected} onChange={(evt) => props.onProjectSelected(project)} onClick={evt => evt.stopPropagation()}/></div>
+				<div><input type="checkbox" checked={props.isProjectSelected} onChange={(evt) => handleProjectSelection()} onClick={evt => evt.stopPropagation()}/></div>
 
 			</div>
 
@@ -134,6 +141,12 @@ const CollapsableProject: React.FC<Props> = (props) => {
 
 }
 export default CollapsableProject;
+
+
+
+
+
+
 
 
 

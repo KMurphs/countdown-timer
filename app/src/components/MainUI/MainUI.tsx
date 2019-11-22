@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './MainUI.css';
 
+
 import { Sprint, SprintStatus } from '../../model/model';
 import TimerLong from '../Timer/TimerLong';
 import { getLongDisplay } from '../Timer/CountDownFormat';
@@ -8,15 +9,11 @@ import CollapsableProject from '../CollapsableContainer/CollapsableProject';
 import TimerControls from '../TimerControls/TimerControls';
 import AddEntry from '../AddEntry/AddEntry';
 import Input_WithAutoComplete from '../Input_WithAutoComplete/Input_WithAutoComplete';
+import InputRange from '../InputRange/InputRange';
 
 
 
 
-// let data:{[key: string]:Array<any>} = {
-// 	'aprjct 1': [{name: 'Task1', duration: 0, elapsed: 2},{name: 'Task2', duration: 0, elapsed: 2},{name: 'Task3', duration: 0, elapsed: 2}],
-// 	'bprjct 2': [{name: 'Task1', duration: 0, elapsed: 2},{name: 'Task2', duration: 0, elapsed: 2},{name: 'Task3', duration: 0, elapsed: 2}],
-// 	'cprjct 3': [{name: 'Task1', duration: 0, elapsed: 2},{name: 'Task2', duration: 0, elapsed: 2},{name: 'Task3', duration: 0, elapsed: 2}]
-// }
 
 type Props = {
 	getProjects: ()=>string[],	
@@ -166,13 +163,20 @@ const MainUI: React.FC<Props> = (props) => {
 
 								<div className="input-wrapper non-draggable">
 									<Input_WithAutoComplete initialContent={typedTask} 
-																					onFieldHandleChange={(newValue)=>setTypedTask(newValue)} 
+																					onFieldHandleChange={(newValue)=>{
+																						setTypedTask(newValue); 
+																						let selectedTask = props.getProjectWithName(currentProject).filter(task => task.Name === newValue)[0]
+																						console.log(selectedTask, newValue)
+																						selectedTask && props.setCurrentSprint(currentProject, selectedTask)
+																					}} 
 																					getAutoCompleteItemsLike={(like)=>{
 																						let tasks = props.getProjectWithName(currentProject).map(task => task.Name)
 																						console.log(like, tasks)
 																						return tasks
 																					}}/>
 								</div>
+
+								
 
 								<div className="timer-wrapper">
 									<span>{getLongDisplay(currentSprintElapsedTime, false, '.', false)}</span>
@@ -193,6 +197,10 @@ const MainUI: React.FC<Props> = (props) => {
 										<span className={'current-details_edit'} onClick={(evt)=>setIsPaneOpened(true)}><i className="fas fa-pen"></i></span>	
 								</div>
 
+
+
+								
+
 						</div>
 					</div>
 				</div>
@@ -201,7 +209,14 @@ const MainUI: React.FC<Props> = (props) => {
 
 
 
-
+				<div className={`timer-slider non-draggable ${currentSprint.ID < 0 || currentProject === '' ?'not-displayed':''}`}>
+					<InputRange range={currentSprint.ID > 0 ? 100000*props.getCurrentSprintElapsedTime()/currentSprint.DurationMs : 0} 
+											setRange={futureRange => { 
+													props.setSprintOnProjectWithName(currentProject, currentSprint.ID, {'DurationMs': 
+															currentSprint.DurationMs + (0.01*futureRange*currentSprint.DurationMs - 1000*props.getCurrentSprintElapsedTime())
+													}) 
+											}}/>
+				</div>
 				<div className={`non-draggable ${currentProject === ''?'not-displayed':''}`}>
 					<TimerControls mustbeVisible={isControlsOpened}
 												 handleReset={handleResetTasks}

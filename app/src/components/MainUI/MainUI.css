@@ -8,7 +8,7 @@
 .MainUI .content-wrapper {
     --handle-width: .5em;
     min-height: 50px;
-    height: 50px;
+    /* height: 50px; */
     /* background: rgba(0, 0, 0, 0.5); */
     position: relative;
 }
@@ -222,4 +222,45 @@
 
 .MainUI .not-displayed {
     display: none;
+}
+
+.MainUI .input-wrapper .timer-line-ui,
+.MainUI .input-wrapper .timer-line-ui--faded {
+    --color: rgba(255, 127, 0, 0.8);
+    height: 1px;
+    background: var(--color);
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 50%;
+    transition: all .2s;
+    z-index: 30000;
+}
+
+.MainUI .input-wrapper .timer-line-ui--faded {
+    background: red;
+    right: 0;
+}
+
+.MainUI .input-wrapper .timer-line-ui div {
+    --side: .8em;
+    width: var(--side);
+    height: var(--side);
+    top: calc(var(--side)/-2);
+    right: calc(var(--side)/-2);
+    border-radius: 50%;
+    position: absolute;
+    background: var(--color);
+    opacity: 0;
+    transition: all .6s;
+    cursor: grab;
+}
+
+.MainUI .input-wrapper:hover .timer-line-ui div {
+    transition: all .6s;
+    opacity: 1;
+}
+
+.MainUI .timer-slider {
+    width: 95%;
 }
