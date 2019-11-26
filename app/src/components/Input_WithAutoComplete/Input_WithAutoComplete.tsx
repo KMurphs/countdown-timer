@@ -178,12 +178,12 @@ const Input_WithAutoComplete: React.FC<Props> = (props) => {
         {
           displayedData
           .map((item, index) => {
-            let substrIndex = item.indexOf(content)
+            let substrIndex = item.toLowerCase().indexOf(content.toLowerCase())
             return (
               <div  key={index}
                     className={`${index===autoCompleteItemsCounter?'autocomplete-active':''}`}
                     onClick={(evt)=>{ setContent(item); setIsBeingWrittenTo(false); fieldHandleChange(item) }}> 
-                {item.substr(0, substrIndex)}<strong>{content}</strong>{item.substr(substrIndex + content.length)}
+                {item.substr(0, substrIndex)}<strong>{item.substr(substrIndex, content.length)}</strong>{item.substr(substrIndex + content.length)}
               </div>
             )
 

@@ -5,6 +5,11 @@ import './App.css';
 
 import MainUI from './components/MainUI/MainUI';
 
+export enum TAppHeightState {
+	CLOSED = 50,
+	OPENED = 400
+}
+
 declare global {
     interface Window {
         ipcRenderer: any;
@@ -17,65 +22,13 @@ let ipcRenderer = window.ipcRenderer
 const App: React.FC = () => {
 
 
+    const handleResize = (appHeight: TAppHeightState) : void => {
 
-
-
-    const [, setReRenderer] = useState<boolean>(true)
-    const [height, setHeight] = useState<number|null>(null)
-
-    // // Async message handler
-    // ipcRenderer.on('react-asynchronous-reply', (event: any, arg: any) => {
-    //     console.log(arg)
-    // })
-
-    // // Async message sender
-    // ipcRenderer.send('react-asynchronous-message', 'react async ping')
-
-    const handleResize = () : void => {
-
-        const monitorRate = 10
-        const monitorTimeSpan = 1000
-        const monitorResize = (monitorTimeSpan: number, lastHeight: number|null): void => {
-            console.log('Monitoring Resizing for the next ', monitorTimeSpan, 'ms')
-
-            let appElement = document.querySelector(".App")
-            let _height = appElement === null ? 0 : appElement.clientHeight
-            
-
-            if(lastHeight === null){
-                let _winHeight = 600
-
-                // Save Current Height
-                setHeight(_winHeight)
-
-                // Synchronous message emmiter and handler
-                console.log(ipcRenderer.sendSync('msgFromApp', {
-                    command: 'resize-height',
-                    data: _winHeight
-                }))
-            }
-
-            if(_height === lastHeight){
-                let _winHeight = _height
-
-                // Save Current Height
-                setHeight(_winHeight)
-
-                // Synchronous message emmiter and handler
-                console.log(ipcRenderer.sendSync('msgFromApp', {
-                    command: 'resize-height',
-                    data: _winHeight
-                }))
-            }
-
-            
-            lastHeight = _height
-            monitorTimeSpan -= monitorRate
-            if(monitorTimeSpan > 0){
-                setTimeout(() => monitorResize(monitorTimeSpan, lastHeight), monitorRate)
-            }
-        }
-        monitorResize(monitorTimeSpan, null)
+        // Synchronous message emmiter and handler
+        console.log(ipcRenderer.sendSync('msgFromApp', {
+            command: 'resize-height',
+            data: appHeight === TAppHeightState.CLOSED
+        }))
 
     }
 
@@ -84,14 +37,9 @@ const App: React.FC = () => {
 		<div className="App">
             <Switch>
                 <Route exact path='/' render={(props:any) => 
-                    <MainUI getCurrentSprint={controller.getCurrentSprint}
-                            setCurrentSprint={controller.setCurrentSprint}
-                            pauseCurrentSprint={controller.pauseCurrentSprint}
-                            resumeCurrentSprint={controller.resumeCurrentSprint}
-                            stopCurrentSprint={controller.stopCurrentSprint}
-                            getCurrentSprintElapsedTime={controller.getCurrentSprintElapsedTime}
-                            getProjects={controller.getProjectsName}
+                    <MainUI getProjects={controller.getProjectsName}
                             getProjectWithName={controller.getProjectWithName}
+                            onResizeAppHeight={handleResize}
                             createSprintOnProjectWithName={controller.createSprintOnProjectWithName}
                             setSprintOnProjectWithName={controller.setSprintOnProjectWithName}
                             startSprintOnPrjectWithName={controller.startSprintOnPrjectWithName}
