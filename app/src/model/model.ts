@@ -1,7 +1,7 @@
-import { getDefaultSettings } from "http2";
 
-export interface Sprint{
+export interface Task{
   ID: number,
+
   No: number,
   Name: string,
   DurationMs: number,
@@ -27,20 +27,14 @@ export enum SprintStatus{
 }
 
 export interface Project{
-  sprints: Sprint[]
-}
-
-
-interface CurrentSprint {
-  owningProject: string,
-  sprint: Sprint,
-  get: () => CurrentSprint,
-  set: (owningProject: string, sprint: Sprint) => CurrentSprint
+  tasks: Task[]
 }
 
 
 
-const getDefaultSprint = (tmpNo: number = 1, durationMin: number = 60): Sprint => {
+
+
+const getDefaultSprint = (tmpNo: number = 1, durationMin: number = 60): Task => {
   return {
     ID: new Date().getTime(),
     CreatedAt: new Date().getTime(),
@@ -57,7 +51,7 @@ const getDefaultSprint = (tmpNo: number = 1, durationMin: number = 60): Sprint =
     Runs: [],
   }
 }
-const getInvalidSprint = (tmpNo: number = 1, durationMin: number = 60): Sprint => {
+const getInvalidSprint = (tmpNo: number = 1, durationMin: number = 60): Task => {
   return {
     ID: -1*new Date().getTime(),
     CreatedAt: -1*new Date().getTime(),
@@ -76,22 +70,9 @@ const getInvalidSprint = (tmpNo: number = 1, durationMin: number = 60): Sprint =
 }
 
 
-const CurrentSprint = function(this: CurrentSprint){
-  this.owningProject = ''
-  this.sprint = getInvalidSprint()
-} as any as { new (): CurrentSprint; };
-CurrentSprint.prototype.get = function(this: CurrentSprint){
-  return {...this}
-}
-CurrentSprint.prototype.set = function(this: CurrentSprint, owningProject: string, sprint: Sprint = getInvalidSprint()){
-  this.owningProject = owningProject
-  this.sprint = sprint
-  return {...this}
-}
-let currentSprint: CurrentSprint = new CurrentSprint()
 
 
-let model: { [key: string]: Sprint[]; } = {
+let model: { [key: string]: Task[]; } = {
   'TestProject': [
     {
       ID: new Date().getTime()+1,
@@ -185,4 +166,4 @@ let model: { [key: string]: Sprint[]; } = {
 };
 
 export default model
-export { getDefaultSprint, currentSprint, getInvalidSprint };
+export { getDefaultSprint, getInvalidSprint };

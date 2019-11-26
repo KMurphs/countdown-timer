@@ -1,80 +1,64 @@
-/* https://stackoverflow.com/questions/2587669/can-i-use-a-before-or-after-pseudo-element-on-an-input-field
-:after and :before are not supported in Internet Explorer 7 and under, on any elements.
-It's also not meant to be used on replaced elements such as form elements (inputs) and image elements.
-In other words it's impossible with pure CSS. */
-
 .App {
     --secondary-white: #dadada;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 
 .App * {
-    margin: 0 auto;
+    margin: 0;
     padding: 0;
     box-sizing: border-box;
+    font-size: 1em;
+    line-height: 1.2em;
 }
 
-.App .Page {
-    height: 100vh;
-    width: 100%;
-    /* background: transparent; */
-    /* background: #800080; */
-    /* fallback for old browsers */
-    /* background: -webkit-linear-gradient(190deg, #6accca, #5f2c82); */
-    /* Chrome 10-25, Safari 5.1-6 */
-    /* background: linear-gradient(190deg, #6accca, #5f2c82); */
-    /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-    background: url('/imgs/bg.png');
-    background-repeat: no-repeat;
-    background-size: cover;
-    overflow: hidden;
+.App .box-hmax-left {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+}
+
+.App .box-hmax-right {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+}
+
+.App .box-top-left {
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+
+.App .box-basic-flex {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .App input {
-    padding: .5em;
-    border: 0;
-    margin: 0;
-    color: var(--secondary-white);
+    border: none;
+    padding: .2em .3em;
     background: transparent;
-    border-radius: 2px;
-}
-
-.App input:hover {
-    background: rgba(0, 0, 0, 0.05);
-}
-
-.App input:focus {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+    transition: all .6s;
     outline: none;
 }
 
-.App .UnderlinedInput {
-    position: relative;
+.App li {
+    list-style: none;
 }
 
-.App .UnderlinedInput::after {
-    content: "";
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    width: 100%;
-    height: 1px;
-    background: var(--secondary-white);
-    transform: scaleX(0);
-    transition: all .2s;
+.App input:hover {
+    background: rgba(0, 0, 0, 0.1);
+    transition: all .6s;
 }
 
-.App .UnderlinedInput:hover::after {
-    transform: scaleX(1);
-    transition: all .2s;
-}
-
-.App .non-draggable {
-    /* .App .non-draggable * { */
-    -webkit-app-region: no-drag !important;
-}
-
-.App .draggable {
-    /* .App .draggable * { */
+.draggable {
     -webkit-app-region: drag;
+}
+
+.non-draggable {
+    -webkit-app-region: no-drag;
 }

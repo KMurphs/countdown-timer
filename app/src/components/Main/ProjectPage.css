@@ -1,0 +1,120 @@
+.ProjectPage {
+    background: rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(0, 0, 0, .2);
+    min-height: 250px;
+    max-height: 250px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.ProjectPage .project-add-container {
+    background: rgba(0, 0, 0, .1);
+    width: 98%;
+    margin: .3em auto;
+    margin-bottom: .8em;
+}
+
+.ProjectPage .project-add {
+    /* background: rgba(0, 0, 0, .1); */
+    padding: .2em;
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 2em;
+}
+
+.ProjectPage .project-text {
+    padding-left: 0.5em;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: stretch;
+}
+
+.ProjectPage .project-add-btn {
+    background: rgba(0, 0, 0, .1);
+    border-radius: 3px;
+    border: 1px solid rgba(0, 0, 0, .2);
+    cursor: pointer;
+    transition: all .6s;
+}
+
+.ProjectPage .project-add-btn:hover {
+    background: rgba(0, 0, 0, .2);
+    transition: all .6s;
+}
+
+.ProjectPage .project-item {
+    /* background: rgba(0, 0, 0, .1); */
+    padding: .2em;
+    width: 100%;
+    cursor: pointer;
+    display: grid;
+    grid-template-columns: 1fr 7em 5em;
+    grid-template-columns: 68% 5em 5em;
+    transition: all .6s;
+}
+
+.ProjectPage .project-item input {
+    border-bottom: none;
+}
+
+.ProjectPage .project-item:hover {
+    background: rgba(0, 0, 0, .1);
+    transition: all .6s;
+}
+
+.ProjectPage .project-item:hover input {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+    transition: all .6s;
+}
+
+.ProjectPage .project-name {
+    padding-left: 0.5em;
+    display: flex;
+    overflow: hidden;
+    /* flex-direction: column; */
+    /* justify-content: center; */
+    /* align-items: stretch; */
+    /* max-width: 55%; */
+}
+
+.ProjectPage .project-name input {}
+
+.ProjectPage .project-elapsedtime,
+.ProjectPage .project-overtime {
+    text-align: right;
+    padding: 0 0.5em;
+    justify-content: flex-end;
+}
+
+.ProjectPage .project-overtime {
+    color: rgb(255, 79, 79);
+    font-weight: bold;
+}
+
+.ProjectPage .project-item .timer-controls-container {
+    margin-left: -150px;
+    opacity: 0;
+    transition: all .6s;
+    transform: scale(.8);
+}
+
+.ProjectPage .project-item:hover .timer-controls-container {
+    margin-left: 0;
+    margin-left: -22px;
+    opacity: 1;
+    transition: all .6s;
+}
+
+@media only screen and (max-width: 500px) {
+    .ProjectPage .project-item {
+        grid-template-columns: 68% 5em;
+        grid-template-rows: 28px 28px;
+    }
+    .ProjectPage .project-item .project-name {
+        grid-column: 1/3;
+    }
+    .ProjectPage .project-item .task-divider {
+        grid-column: 2/3;
+    }
+}

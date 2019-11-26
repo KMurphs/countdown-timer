@@ -1,0 +1,104 @@
+.Main {
+    display: flex;
+    justify-content: space-between;
+    align-items: stretch;
+    position: relative;
+    height: 60px;
+    min-height: 60px;
+}
+
+.Main .drag-handle {
+    width: .5em;
+    background: rgba(0, 0, 0, 0.3);
+    z-index: 20;
+}
+
+.Main .current-project {
+    font-size: .7em;
+    margin-left: 1.5em;
+    top: .3em;
+    color: rgba(0, 0, 0, 0.4);
+    transition: all .6s;
+}
+
+.Main .current-project:hover {
+    color: rgba(0, 0, 0, 1);
+    transition: all .6s;
+}
+
+.Main .current-project-edit {
+    display: inline-flex;
+    padding: .1em .2em .2em .2em;
+    position: relative;
+    left: .5em;
+    cursor: pointer;
+    z-index: 10;
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 3px;
+    transition: all .6s;
+}
+
+.Main .current-project .current-project-edit:hover {
+    background: rgba(0, 0, 0, 0.3);
+    transition: all .6s;
+}
+
+.Main .current-task {
+    display: flex;
+    background: rgba(0, 0, 0, 0.1);
+    flex-direction: column;
+    justify-content: center;
+    align-items: stretch;
+    min-width: 200px;
+    padding: 0 0.5em 0 1em;
+    width: 80%;
+    position: relative;
+}
+
+.Main .current-task input {
+    position: relative;
+    top: .2em;
+}
+
+.Main .current-task .timer-slider-bg,
+.Main .current-task .timer-slider {
+    position: absolute;
+    left: 1em;
+    right: .5em;
+    bottom: .3em;
+    height: 2px;
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.Main .current-task .timer-slider {
+    --color: blue;
+    right: 7em;
+    background: var(--color);
+}
+
+.Main .current-task .timer-slider::after {
+    --dimension: .8em;
+    content: "";
+    background: var(--color);
+    position: absolute;
+    width: var(--dimension);
+    height: var(--dimension);
+    border-radius: 50%;
+    top: calc(var(--dimension)/-2);
+    right: calc(var(--dimension)/-2);
+    transition: all .6s;
+    cursor: pointer;
+}
+
+.Main .timer-display {
+    display: flex;
+    background: rgba(0, 0, 0, 0.1);
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-width: 100px;
+    padding: 1em;
+    width: 20%;
+    font-size: 1.3em;
+    line-height: 1.2em;
+}
