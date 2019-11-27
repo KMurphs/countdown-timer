@@ -10,7 +10,7 @@ import { getProjects, getTotalTime, getOvertime } from './ProjectsController'
 
 
 type ProjectPageProps = {
-	projectName: string,
+	selectedProject: string,
 	onRename: (selectedProject: string)=>void,
 	onSelection: (selectedProject: string)=>void,
 	onCreate: (newProject: string)=>void,
@@ -24,8 +24,13 @@ type ProjectPageProps = {
 const ProjectPage: React.FC<ProjectPageProps> = (props) => {
 
 	const [typedProject, setTypedProject] = useState<string>('')
+	const [tmpRender, setTmpRender] = useState<boolean>(false)
 	const registeredProjects = getProjects()
 	const matchingProjects = registeredProjects.filter(project => project.toLowerCase().indexOf(typedProject.toLowerCase())!==-1)
+	const onCreate = (newProject: string):void => {
+		setTmpRender(tmpRender => !tmpRender)
+		props.onCreate(newProject)
+	}
 	
 	return (
 		<div className="ProjectPage non-draggable">
@@ -37,11 +42,12 @@ const ProjectPage: React.FC<ProjectPageProps> = (props) => {
 					<div className="project-add">
 						<div className="project-text">
 							<input type="text" placeholder="Some Project" 
-									   value={typedProject}
+										 value={typedProject}
+										 onKeyDown={evt => evt.keyCode === 13 && onCreate(typedProject)}
 									   onChange={evt => setTypedProject(evt.target.value)}/>
 						</div>				
 						<div className={`box-basic-flex project-add-btn ${matchingProjects.length===0 ? '' : 'invisible'}`}
-								 onClick={evt => props.onCreate(typedProject)}>
+								 onClick={evt => onCreate(typedProject)}>
 							<i className="fas fa-plus"></i>
 						</div>	
 					</div>
@@ -67,6 +73,10 @@ const ProjectPage: React.FC<ProjectPageProps> = (props) => {
 								</div>
 								<div className="box-basic-flex project-elapsedtime">{projectTotalTime}</div>
 								<div className="box-basic-flex project-overtime">{`${projectOverTime>0?'+':''}${projectOverTime}%`}</div>
+								<label className="box-basic-flex item-selector">
+									<input type="checkbox" checked={props.selectedProject===project}/>
+									<span className="item-checkmark"></span>
+								</label>
 							</li>
 						)
 					})

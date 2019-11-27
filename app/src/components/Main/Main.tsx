@@ -3,6 +3,7 @@ import './Main.css';
 import TimerControls from '../TimerElements/TimerControls';
 import ProjectPage from '../Projects/ProjectPage';
 import TaskPage from '../Tasks/TaskPage';
+import Controller from '../../mainController';
 
 
 export enum TOpenedPane {
@@ -20,35 +21,38 @@ export enum TTimerActions {
 }
 const Main: React.FC = () => {
 
+	// Create and store controller for this module anad this session
+	const [controller,] = useState<Controller>(new Controller())
+
 	// Monitors which pane is opened (see TOpenedPane)
 	const [openedPane, _setOpenedPane] = useState<TOpenedPane>(TOpenedPane.NONE)
 
 
-	// The following block of code ensures that the task pane will close after "taskPaneTimeoutMs" if the 
-	// Mouse leaves the Task pane and do not re-enter within the "taskPaneTimeoutMs"
-	const taskPaneTimeoutMs = 1000 // Task Pane will close after this amount of time in case of prolonged inactivity
+	// The following block of code ensures that the pane will close after "paneTimeoutMs" if the 
+	// Mouse leaves the pane and do not re-enter within the "paneTimeoutMs"
+	const paneTimeoutMs = 10000 // Pane will close after this amount of time in case of prolonged inactivity
 	const [, setMouseLeftAppMoment] = useState<number | null>(null)
-	// Interval containing a function that monitors and eventually closes the task pane in case of prolonged inactivity 
-	const [, setCloseTaskPaneInterval] = useState<NodeJS.Timeout | null>(null) 
+	// Interval containing a function that monitors and eventually closes the pane in case of prolonged inactivity 
+	const [, setClosePaneInterval] = useState<NodeJS.Timeout | null>(null) 
 
 	// It is worth remmebering that since we are dealing with setInterval, we will not have access to the updated variables
 	// declared above. A workaround is to remember that the updated value for these variable can be accessed in their
 	// respective react hooks "set" functions. This makes the code below a little bit undigestible
 
-	// Highjack setOpenedPane to spawn an interval function when the task pane is opened. 
-	// The spawned function will eventually close the pane after taskPaneTimeoutMs ms of inactivity
+	// Highjack setOpenedPane to spawn an interval function when the pane is opened. 
+	// The spawned function will eventually close the pane after paneTimeoutMs ms of inactivity
 	const setOpenedPane = (paneToOpen: TOpenedPane) => {
-		if(paneToOpen === TOpenedPane.TASK){
-			setCloseTaskPaneInterval(setInterval(()=>{
+		if(paneToOpen !== TOpenedPane.NONE){
+			setClosePaneInterval(setInterval(()=>{
 				setMouseLeftAppMoment(mouseLeftAppMoment => {
 
 
-					if(mouseLeftAppMoment !== null && (new Date().getTime() - mouseLeftAppMoment) > taskPaneTimeoutMs) {
-						// It's been "taskPaneTimeoutMs" ms since the mouse left, it is safe to assume that the user
+					if(mouseLeftAppMoment !== null && (new Date().getTime() - mouseLeftAppMoment) > paneTimeoutMs) {
+						// It's been "paneTimeoutMs" ms since the mouse left, it is safe to assume that the user
 						// is not using the pane anymomre and we can close it
-						_setOpenedPane(openedPane => openedPane === TOpenedPane.TASK ? TOpenedPane.NONE : openedPane)
-						setCloseTaskPaneInterval(closeTaskPaneInterval => {
-							closeTaskPaneInterval !== null && clearInterval(closeTaskPaneInterval)
+						_setOpenedPane(openedPane => openedPane === paneToOpen ? TOpenedPane.NONE : openedPane)
+						setClosePaneInterval(closePaneInterval => {
+							closePaneInterval !== null && clearInterval(closePaneInterval)
 							return null
 						})
 						mouseLeftAppMoment = null
@@ -72,7 +76,7 @@ const Main: React.FC = () => {
 	const [selectedProject, setSelectedProject] = useState<string>('')
 
 	const handleProjectChange = (newProject: string) => {
-		setOpenedPane(TOpenedPane.NONE)
+		// setOpenedPane(TOpenedPane.NONE)
 		setSelectedProject(newProject)
 	}
 	
@@ -112,10 +116,10 @@ const Main: React.FC = () => {
 			
 
 			{(openedPane === TOpenedPane.PROJECT) && (
-					<ProjectPage onSelection={handleProjectChange} 
-											 projectName='Test Project' 
+					<ProjectPage onSelection={setSelectedProject} 
+											 selectedProject={selectedProject} 
 											 onTimerAction={(action: TTimerActions)=>console.log(TTimerActions[action])}
-											 onCreate={newProject => console.log('New Project ', newProject, ' is being created')}
+											 onCreate={controller.addProject}
 											 onRename={newName => console.log('Project was renamed into ', newName)}
 											 getTotalTime={project => {console.log('Obtaining total time for project ', project); return '11:52:12'}}
 											 getOvertime={project => {console.log('Obtaining total overtime for project ', project); return -51}}/>

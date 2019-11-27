@@ -1,9 +1,11 @@
-import model, { Task } from './model/model'
+import model, { Task, getDefaultSprint } from './model/model'
 
 interface Controller {
-  version: 'v1.0.1',
+  version: string,
   model: {[key: string]: Task[]},
   defaultDurationMs: number,
+  getVersion: ()=>string
+  addProject: (newProject: string)=>void
 }
 
 let Controller = function(this: Controller, model: {[key: string]: Task[]}) {
@@ -11,6 +13,7 @@ let Controller = function(this: Controller, model: {[key: string]: Task[]}) {
 
   this.defaultDurationMs = defaultDurationMin * 60
   this.model = model
+  this.version = '2.0'
 
 
 
@@ -18,6 +21,9 @@ let Controller = function(this: Controller, model: {[key: string]: Task[]}) {
 
 Controller.prototype.getVersion = function(this: Controller){
   return this.version
+}
+Controller.prototype.addProject = function(this: Controller, newProject: string){
+  !model[newProject] && (model[newProject] = []) && (model[newProject].push(getDefaultSprint()))
 }
 
 

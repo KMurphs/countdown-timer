@@ -58,7 +58,7 @@ const TaskPage: React.FC<TaskPageProps> = (props) => {
 					matchingTasks.map((task, index) => {
 						let taskElapsedTime = getElapsedTime(props.owningProject, task.ID)
 						return (
-							<li className="task-item" key={index}>
+							<li className="task-item" key={index} >
 								<div className="task-name">
 									<div className="timer-controls-container">
 										<TimerControls  invisibleControls={[]} 
