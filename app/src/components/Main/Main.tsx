@@ -1,8 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import './Main.css';
-import './TimerElements.css';
-import './ProjectPage.css';
-import './TaskPage.css';
 import TimerControls from '../TimerElements/TimerControls';
 import ProjectPage from '../Projects/ProjectPage';
 import TaskPage from '../Tasks/TaskPage';
@@ -115,6 +112,7 @@ const Main: React.FC = () => {
 			{(openedPane === TOpenedPane.PROJECT) && (
 					<ProjectPage onSelection={handleProjectChange} 
 											 projectName='Test Project' 
+											 onTimerAction={(action: TTimerActions)=>console.log(TTimerActions[action])}
 											 onCreate={newProject => console.log('New Project ', newProject, ' is being created')}
 											 onRename={newName => console.log('Project was renamed into ', newName)}
 											 getTotalTime={project => {console.log('Obtaining total time for project ', project); return '11:52:12'}}
@@ -127,8 +125,9 @@ const Main: React.FC = () => {
 										taskName={'Some Name'}
 										typedTask={typedTask}
 										setTypedTask={setTypedTask}
+										onTimerAction={(action: TTimerActions)=>console.log(TTimerActions[action])}
 										onChangedName={(newName)=>console.log('Task with ID ', 1, ' was renamed into ', newName)}
-										onChangedDuration={(newName)=>console.log('Task with ID ', 1, ' was renamed into ', newName)}
+										onChangedDuration={(newName)=>console.log('Duration of Task with ID ', 1, ' was changed into ', newName)}
 										onCreate={(newTaskName)=>console.log('Creating new Task ', newTaskName)}
 										getElapsedTime={(taskID)=>{console.log('Getting Elapsed Time on Task with ID ', taskID); return '11:02:62'}}
 										getDuration={(taskID)=>{console.log('Getting Duration of Task with ID ', taskID); return {hours: 11, minutes: 52, seconds: 24}}}/>

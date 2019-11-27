@@ -22,6 +22,7 @@ type TaskPageProps = {
 	onChangedDuration: (newDuration: number)=>void,
 	getElapsedTime: (thisTaskID: number)=>string,
 	getDuration: (thisTaskID: number)=>TimeObject,
+	onTimerAction: (action: TTimerActions)=>void,
 }
 
 const TaskPage: React.FC<TaskPageProps> = (props) => {
@@ -55,7 +56,7 @@ const TaskPage: React.FC<TaskPageProps> = (props) => {
 					<div className="task-name">
 						<div className="timer-controls-container">
 							<TimerControls  invisibleControls={[]} 
-															onTimerAction={(action: TTimerActions)=>console.log(TTimerActions[action])}/>
+															onTimerAction={props.onTimerAction}/>
 						</div>
 						<input type="text" placeholder="Some task" 
 									 value={props.taskName}

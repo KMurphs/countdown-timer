@@ -15,6 +15,7 @@ type ProjectPageProps = {
 	onCreate: (newProject: string)=>void,
 	getTotalTime: (thisProject: string)=>string,
 	getOvertime: (thisProject: string)=>number,
+	onTimerAction: (action: TTimerActions)=>void,
 }
 
 
@@ -48,7 +49,7 @@ const ProjectPage: React.FC<ProjectPageProps> = (props) => {
 				<li className="project-item" onClick={evt => props.onSelection(props.projectName)}>
 					<div className="project-name">
 						<div className="timer-controls-container">
-							<TimerControls onTimerAction={(action: TTimerActions)=>console.log(TTimerActions[action])} invisibleControls={[]}/>
+							<TimerControls onTimerAction={props.onTimerAction} invisibleControls={[]}/>
 						</div>
 						<input type="text" placeholder="Your Awesome Project" 
 						 			 onClick={evt => evt.stopPropagation()}
