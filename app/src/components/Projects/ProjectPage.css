@@ -36,6 +36,7 @@
     border: 1px solid rgba(0, 0, 0, .2);
     cursor: pointer;
     transition: all .6s;
+    opacity: 1;
 }
 
 .ProjectPage .project-add-btn:hover {

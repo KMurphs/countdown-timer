@@ -62,3 +62,8 @@
 .non-draggable {
     -webkit-app-region: no-drag;
 }
+
+.invisible {
+    opacity: 0 !important;
+    transition: all .6s;
+}

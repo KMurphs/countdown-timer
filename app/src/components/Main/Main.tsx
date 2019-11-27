@@ -69,9 +69,11 @@ const Main: React.FC = () => {
 
 
 	const [typedTask, setTypedTask] = useState<string>('')
+	const [selectedProject, setSelectedProject] = useState<string>('')
 
 	const handleProjectChange = (newProject: string) => {
 		setOpenedPane(TOpenedPane.NONE)
+		setSelectedProject(newProject)
 	}
 	
 		 
@@ -81,7 +83,7 @@ const Main: React.FC = () => {
 				
 				<div className="non-draggable box-top-left box-basic-flex current-project">
 					Project: &nbsp;
-					<span>None</span>
+					<span>{selectedProject==='' ? 'None' : selectedProject}</span>
 					<span className="box-basic-flex current-project-edit"
 								onClick={evt => setOpenedPane(TOpenedPane.PROJECT)}>
 						<i className="fas fa-pen"></i>
@@ -120,9 +122,10 @@ const Main: React.FC = () => {
 			)}
 
 			
-			{(openedPane === TOpenedPane.TASK) && (
+			{(openedPane === TOpenedPane.TASK) && (selectedProject !== '') && (
 					<TaskPage taskID={1}
 										taskName={'Some Name'}
+										owningProject={selectedProject}
 										typedTask={typedTask}
 										setTypedTask={setTypedTask}
 										onTimerAction={(action: TTimerActions)=>console.log(TTimerActions[action])}

@@ -11,7 +11,7 @@ export interface Task{
   CreatedAt: number,
   StartedAt: number,
   
-  Status: SprintStatus,
+  Status: TaskStatus,
   Pauses: Laps[],
   Runs: Laps[],
 }
@@ -19,7 +19,7 @@ export interface Laps{
   lapsMoment: number,
   lapsDuration: number,
 }
-export enum SprintStatus{
+export enum TaskStatus{
   SCHEDULED = 0,
   EXECUTING,
   PAUSED,
@@ -38,7 +38,7 @@ const getDefaultSprint = (tmpNo: number = 1, durationMin: number = 60): Task => 
   return {
     ID: new Date().getTime(),
     CreatedAt: new Date().getTime(),
-    Status: SprintStatus.SCHEDULED,
+    Status: TaskStatus.SCHEDULED,
 
     Name: `Sprint ${tmpNo}`,
     No: tmpNo,
@@ -55,7 +55,7 @@ const getInvalidSprint = (tmpNo: number = 1, durationMin: number = 60): Task => 
   return {
     ID: -1*new Date().getTime(),
     CreatedAt: -1*new Date().getTime(),
-    Status: SprintStatus.SCHEDULED,
+    Status: TaskStatus.SCHEDULED,
 
     Name: `Sprint ${tmpNo}`,
     No: tmpNo,
@@ -77,7 +77,7 @@ let model: { [key: string]: Task[]; } = {
     {
       ID: new Date().getTime()+1,
       CreatedAt: new Date().getTime()+1,
-      Status: SprintStatus.SCHEDULED,
+      Status: TaskStatus.SCHEDULED,
   
       Name: `Sprint ${1}`,
       No: 2,
@@ -91,7 +91,7 @@ let model: { [key: string]: Task[]; } = {
     },{
       ID: new Date().getTime()+2,
       CreatedAt: new Date().getTime()+2,
-      Status: SprintStatus.SCHEDULED,
+      Status: TaskStatus.SCHEDULED,
   
       Name: `Sprint ${2}`,
       No: 1,
@@ -105,7 +105,7 @@ let model: { [key: string]: Task[]; } = {
     },{
       ID: new Date().getTime()+3,
       CreatedAt: new Date().getTime()+3,
-      Status: SprintStatus.SCHEDULED,
+      Status: TaskStatus.SCHEDULED,
   
       Name: `Sprint ${3}`,
       No: 3,
@@ -122,7 +122,7 @@ let model: { [key: string]: Task[]; } = {
     {
       ID: new Date().getTime()+1,
       CreatedAt: new Date().getTime()+1,
-      Status: SprintStatus.SCHEDULED,
+      Status: TaskStatus.SCHEDULED,
   
       Name: `Sprint ${1}`,
       No: 2,
@@ -136,7 +136,7 @@ let model: { [key: string]: Task[]; } = {
     },{
       ID: new Date().getTime()+2,
       CreatedAt: new Date().getTime()+2,
-      Status: SprintStatus.SCHEDULED,
+      Status: TaskStatus.SCHEDULED,
   
       Name: `Sprint ${2}`,
       No: 1,
@@ -150,7 +150,7 @@ let model: { [key: string]: Task[]; } = {
     },{
       ID: new Date().getTime()+3,
       CreatedAt: new Date().getTime()+3,
-      Status: SprintStatus.SCHEDULED,
+      Status: TaskStatus.SCHEDULED,
   
       Name: `Sprint ${3}`,
       No: 3,
