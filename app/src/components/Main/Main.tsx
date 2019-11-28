@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import './Main.css';
+
 import model, { Task } from '../../model/model';
-import Controller from '../../mainController';
+import { getProjectByIndex, addTask, addProject, updateProject, updateTask } from '../../controllers.common';
+import Controller from '../../timerController';
+
 import TimerControls from '../TimerElements/TimerControls';
 import ProjectPage from '../Projects/ProjectPage';
 import TaskPage from '../Tasks/TaskPage';
+
 
 
 
@@ -82,7 +86,7 @@ const Main: React.FC = () => {
 
 	
 	const handleNewTask = (newTask: string) => {
-		selectedProjectID !== null && setSelectedTaskID(controller.addTask(selectedProjectID, typedTask))
+		selectedProjectID !== null && setSelectedTaskID(addTask(selectedProjectID, typedTask))
 	}
 	
 		 
@@ -92,7 +96,7 @@ const Main: React.FC = () => {
 				
 				<div className="non-draggable box-top-left box-basic-flex current-project">
 					Project: &nbsp;
-					<span>{selectedProjectID === null ? 'None' : controller.getProjectByIndex(selectedProjectID).name}</span>
+					<span>{selectedProjectID === null ? 'None' : getProjectByIndex(selectedProjectID).name}</span>
 					<span className="box-basic-flex current-project-edit"
 								onClick={evt => setOpenedPane(TOpenedPane.PROJECT)}>
 						<i className="fas fa-pen"></i>
@@ -130,8 +134,8 @@ const Main: React.FC = () => {
 					<ProjectPage onSelection={setSelectedProjectID} 
 											 selectedProjectID={selectedProjectID !== null ? selectedProjectID : -1} 
 											 onTimerAction={(action: TTimerActions)=>console.log(TTimerActions[action])}
-											 onCreate={(newProject)=>controller.addProject(newProject)}
-											 onRename={(projectID, newName) => controller.updateProject(projectID, newName)}
+											 onCreate={(newProject)=>addProject(newProject)}
+											 onRename={(projectID, newName) => updateProject(projectID, newName)}
 											 getTotalTime={project => {console.log('Obtaining total time for project ', project); return '11:52:12'}}
 											 getOvertime={project => {console.log('Obtaining total overtime for project ', project); return -51}}/>
 			)}
@@ -143,7 +147,7 @@ const Main: React.FC = () => {
 										typedTask={typedTask}
 										setTypedTask={setTypedTask}
 										onTimerAction={(action: TTimerActions)=>console.log(TTimerActions[action])}
-										onChangedName={(taskID, newName)=>selectedProjectID !== null && controller.updateTask(selectedProjectID, taskID, {'Name': newName})}
+										onChangedName={(taskID, newName)=>selectedProjectID !== null && updateTask(selectedProjectID, taskID, {'Name': newName})}
 										onChangedDuration={(newName)=>console.log('Duration of Task with ID ', 1, ' was changed into ', newName)}
 										onCreate={(newTask) => handleNewTask(newTask)}
 										getElapsedTime={(taskID)=>{console.log('Getting Elapsed Time on Task with ID ', taskID); return '11:02:62'}}

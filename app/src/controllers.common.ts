@@ -1,4 +1,4 @@
-import model, { getDefaultSprint } from './model/model'
+import model, { getDefaultSprint, Task } from './model/model'
 
 
 export type TProject = {
@@ -82,6 +82,14 @@ const getProjects = ():TProject[] => {
 
 
 
+const getTaskByIndex = (owningProjectID: number, taskID: number): Task  => {
+
+  let owningProject = getProjectByIndex(owningProjectID)
+
+  let [task] = model[owningProject.key].filter(tmpTask => tmpTask.ID === taskID)
+
+  return task
+}
 const addTask = (owningProjectID: number, newTaskName: string): number|null  => {
   let newTaskID: number|null = null
   let owningProject = getProjectByIndex(owningProjectID)
@@ -144,6 +152,7 @@ export {
   getProjectByName,
   updateProject,
   
+  getTaskByIndex,
   addTask,
   updateTask
 }
