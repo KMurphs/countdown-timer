@@ -1,3 +1,4 @@
+import {getProjectByIndex} from '../../controllers.common'
 import model, { TaskStatus } from '../../model/model'
 
 export type UITask = {
@@ -15,16 +16,10 @@ type TimeObject = {
 
 const getTasks = (owningProjectID: number): UITask[] => {
 
-  let index = null
-  let name = ''
-  Object.keys(model).forEach(project => {
-    const [_index, _name] = project.split('::');
-    (_index === `${owningProjectID}`) && (index = parseInt(_index));
-    (_index === `${owningProjectID}`) && (name = _name);
-  })
+  const {index, key: projectKey} = getProjectByIndex(owningProjectID)
 
   return index !== null 
-  ? model[`${index}::${name}`].map(task => {
+  ? model[projectKey].map(task => {
     return {
       DurationMs: task.DurationMs, 
       ID: task.ID, 

@@ -73,10 +73,8 @@ const TaskPage: React.FC<TaskPageProps> = (props) => {
 																		onTimerAction={props.onTimerAction}/>
 									</div>
 									<input type="text" placeholder="Some task" 
-												// value={props.taskName}
 												value={task.Name}
 												onChange={evt => onChangedName(task.ID, evt.target.value)}
-												// onKeyDown={evt => evt.keyCode === 13 && props.setTypedTask(task.Name)}
 												onClick={evt => evt.stopPropagation()}/>
 								</div>
 								<div className="box-basic-flex task-elapsedtime"> {taskElapsedTime} </div>

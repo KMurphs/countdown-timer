@@ -118,7 +118,12 @@ const Main: React.FC = () => {
 
 			</div>
 		
-			<TimerControls 	onTimerAction={(action: TTimerActions)=>console.log(TTimerActions[action])} invisibleControls={[]}/>
+			{
+				(selectedProjectID !== null) && (selectedTaskID !== null) && (
+					<TimerControls 	onTimerAction={(action: TTimerActions)=>console.log(TTimerActions[action])} invisibleControls={[]}/>
+				)
+			}
+			
 			
 
 			{(openedPane === TOpenedPane.PROJECT) && (
@@ -132,7 +137,7 @@ const Main: React.FC = () => {
 			)}
 
 			
-			{(openedPane === TOpenedPane.TASK) && (setSelectedProjectID !== null) && (
+			{(openedPane === TOpenedPane.TASK) && (selectedProjectID !== null) && (
 					<TaskPage selectedTaskID={selectedTaskID}
 										owningProjectID={selectedProjectID}
 										typedTask={typedTask}

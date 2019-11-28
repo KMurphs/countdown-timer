@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import './ProjectPage.css';
 import TimerControls from '../TimerElements/TimerControls';
 import { TTimerActions } from '../Main/Main';
-import { getProjects, getTotalTime, getOvertime } from './ProjectsController'
+import { getProjects} from '../../controllers.common'
+import { getTotalTime, getOvertime } from './ProjectsController'
 
 
 
@@ -26,7 +27,8 @@ const ProjectPage: React.FC<ProjectPageProps> = (props) => {
 	const [typedProject, setTypedProject] = useState<string>('')
 	const [, setTmpRender] = useState<boolean>(false)
 	const registeredProjects = getProjects()
-	const matchingProjects = registeredProjects.filter(project => project.name.toLowerCase().indexOf(typedProject.toLowerCase())!==-1).sort((a,b) => a.index - b.index)
+	const matchingProjects = registeredProjects.filter(project => project.name.toLowerCase().indexOf(typedProject.toLowerCase())!==-1)
+																						 .sort((a,b) => (a.index !== null && b.index !== null) ? a.index - b.index : 0)
 	const onCreate = (newProject: string):void => {
 		props.onCreate(newProject)
 		setTmpRender(tmpRender => !tmpRender)
@@ -60,10 +62,11 @@ const ProjectPage: React.FC<ProjectPageProps> = (props) => {
 
 				{
 					matchingProjects.map((project, index) => {
+						let projectIndex = project.index !== null ? project.index : -1
 						let projectOverTime = getOvertime(project.name)
 						let projectTotalTime = getTotalTime(project.name)
 						return (
-							<li className="project-item" key={project.index} onClick={evt => props.onSelection(project.index)}>
+							<li className="project-item" key={projectIndex} onClick={evt => props.onSelection(projectIndex)}>
 								<div className="project-name">
 									<div className="timer-controls-container">
 										<TimerControls onTimerAction={props.onTimerAction} invisibleControls={[]}/>
@@ -71,13 +74,13 @@ const ProjectPage: React.FC<ProjectPageProps> = (props) => {
 									<input type="text" placeholder="Your Awesome Project" 
 													onClick={evt => evt.stopPropagation()}
 													value={project.name} 
-													onKeyDown={evt => evt.keyCode === 13 && props.onSelection(project.index)}
-													onChange={evt => onRename(project.index, evt.target.value)}/>
+													onKeyDown={evt => evt.keyCode === 13 && props.onSelection(projectIndex)}
+													onChange={evt => onRename(projectIndex, evt.target.value)}/>
 								</div>
 								<div className="box-basic-flex project-elapsedtime">{projectTotalTime}</div>
 								<div className="box-basic-flex project-overtime">{`${projectOverTime>0?'+':''}${projectOverTime}%`}</div>
 								<label className="box-basic-flex item-selector">
-									<input type="checkbox" checked={props.selectedProjectID===project.index} onChange={evt => props.onSelection(project.index)}/>
+									<input type="checkbox" checked={props.selectedProjectID===projectIndex} onChange={evt => props.onSelection(projectIndex)}/>
 									<span className="item-checkmark"></span>
 								</label>
 							</li>

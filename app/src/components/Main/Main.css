@@ -88,6 +88,12 @@
     right: calc(var(--dimension)/-2);
     transition: all .6s;
     cursor: pointer;
+    opacity: 0;
+}
+
+.Main .current-task .timer-slider:hover::after {
+    transition: all .6s;
+    opacity: 1;
 }
 
 .Main .timer-display {
