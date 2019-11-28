@@ -1,5 +1,9 @@
 import { getProjects } from './ProjectsController'
-let projects: string[]
+type TProject = {
+  index: number;
+  name: string;
+}
+let projects: TProject[]
 
 describe('Project Controller', ()=>{
   test('Can obtain current projects', ()=>{

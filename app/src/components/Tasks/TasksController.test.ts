@@ -1,13 +1,13 @@
 import { getTasks, UITask, convertMsToTimeObject } from './TasksController'
 import model from '../../model/model'
 
-let owningProject = Object.keys(model)[0]
+let [owningProjectID, owningProject] = Object.keys(model)[0].split('::')
 let tasks: UITask[]
 
-describe('Project Controller', ()=>{
+describe('Task Controller', ()=>{
   
   test(`Can obtain current tasks for project ${owningProject}`, ()=>{
-    tasks = getTasks(owningProject)
+    tasks = getTasks(parseInt(owningProjectID))
     // console.log(tasks)
     expect(tasks.constructor.name).toBe('Array')
     expect(tasks.length).toBeGreaterThan(1)

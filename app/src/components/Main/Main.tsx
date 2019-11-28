@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import './Main.css';
+import model, { Task } from '../../model/model';
+import Controller from '../../mainController';
 import TimerControls from '../TimerElements/TimerControls';
 import ProjectPage from '../Projects/ProjectPage';
 import TaskPage from '../Tasks/TaskPage';
-import Controller from '../../mainController';
+
+
 
 
 export enum TOpenedPane {
@@ -19,10 +22,11 @@ export enum TTimerActions {
 	STOP,
 	RESTART_ALL
 }
+const controller = new Controller(model)
+console.log(controller)
+console.log(controller.getVersion())
 const Main: React.FC = () => {
 
-	// Create and store controller for this module anad this session
-	const [controller,] = useState<Controller>(new Controller())
 
 	// Monitors which pane is opened (see TOpenedPane)
 	const [openedPane, _setOpenedPane] = useState<TOpenedPane>(TOpenedPane.NONE)
@@ -73,11 +77,12 @@ const Main: React.FC = () => {
 
 
 	const [typedTask, setTypedTask] = useState<string>('')
-	const [selectedProject, setSelectedProject] = useState<string>('')
+	const [selectedProjectID, setSelectedProjectID] = useState<number|null>(null)
+	const [selectedTaskID, setSelectedTaskID] = useState<number|null>(null)
 
-	const handleProjectChange = (newProject: string) => {
-		// setOpenedPane(TOpenedPane.NONE)
-		setSelectedProject(newProject)
+	
+	const handleNewTask = (newTask: string) => {
+		selectedProjectID !== null && setSelectedTaskID(controller.addTask(selectedProjectID, typedTask))
 	}
 	
 		 
@@ -87,7 +92,7 @@ const Main: React.FC = () => {
 				
 				<div className="non-draggable box-top-left box-basic-flex current-project">
 					Project: &nbsp;
-					<span>{selectedProject==='' ? 'None' : selectedProject}</span>
+					<span>{selectedProjectID === null ? 'None' : controller.getProjectByIndex(selectedProjectID).name}</span>
 					<span className="box-basic-flex current-project-edit"
 								onClick={evt => setOpenedPane(TOpenedPane.PROJECT)}>
 						<i className="fas fa-pen"></i>
@@ -98,6 +103,7 @@ const Main: React.FC = () => {
 					<input type="text" placeholder="Your Task here" 
 								 value={typedTask}
 								 onChange={evt => setTypedTask(evt.target.value)}
+								 onKeyDown={evt => evt.keyCode === 13 && handleNewTask(typedTask)}
 								 onMouseDown={evt => setOpenedPane(TOpenedPane.TASK)}/>
 					<div className="timer-slider-bg"></div>
 					<div className="timer-slider"></div>
@@ -116,26 +122,25 @@ const Main: React.FC = () => {
 			
 
 			{(openedPane === TOpenedPane.PROJECT) && (
-					<ProjectPage onSelection={setSelectedProject} 
-											 selectedProject={selectedProject} 
+					<ProjectPage onSelection={setSelectedProjectID} 
+											 selectedProjectID={selectedProjectID !== null ? selectedProjectID : -1} 
 											 onTimerAction={(action: TTimerActions)=>console.log(TTimerActions[action])}
-											 onCreate={controller.addProject}
-											 onRename={newName => console.log('Project was renamed into ', newName)}
+											 onCreate={(newProject)=>controller.addProject(newProject)}
+											 onRename={(projectID, newName) => controller.updateProject(projectID, newName)}
 											 getTotalTime={project => {console.log('Obtaining total time for project ', project); return '11:52:12'}}
 											 getOvertime={project => {console.log('Obtaining total overtime for project ', project); return -51}}/>
 			)}
 
 			
-			{(openedPane === TOpenedPane.TASK) && (selectedProject !== '') && (
-					<TaskPage taskID={1}
-										taskName={'Some Name'}
-										owningProject={selectedProject}
+			{(openedPane === TOpenedPane.TASK) && (setSelectedProjectID !== null) && (
+					<TaskPage selectedTaskID={selectedTaskID}
+										owningProjectID={selectedProjectID}
 										typedTask={typedTask}
 										setTypedTask={setTypedTask}
 										onTimerAction={(action: TTimerActions)=>console.log(TTimerActions[action])}
-										onChangedName={(newName)=>console.log('Task with ID ', 1, ' was renamed into ', newName)}
+										onChangedName={(taskID, newName)=>selectedProjectID !== null && controller.updateTask(selectedProjectID, taskID, {'Name': newName})}
 										onChangedDuration={(newName)=>console.log('Duration of Task with ID ', 1, ' was changed into ', newName)}
-										onCreate={(newTaskName)=>console.log('Creating new Task ', newTaskName)}
+										onCreate={(newTask) => handleNewTask(newTask)}
 										getElapsedTime={(taskID)=>{console.log('Getting Elapsed Time on Task with ID ', taskID); return '11:02:62'}}
 										getDuration={(taskID)=>{console.log('Getting Duration of Task with ID ', taskID); return {hours: 11, minutes: 52, seconds: 24}}}/>
 			)}

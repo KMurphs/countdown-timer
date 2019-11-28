@@ -34,7 +34,7 @@ export interface Project{
 
 
 
-const getDefaultSprint = (tmpNo: number = 1, durationMin: number = 60): Task => {
+const getDefaultSprint = (tmpNo: number = 1, durationMin: number = 20): Task => {
   return {
     ID: new Date().getTime(),
     CreatedAt: new Date().getTime(),
@@ -51,7 +51,7 @@ const getDefaultSprint = (tmpNo: number = 1, durationMin: number = 60): Task => 
     Runs: [],
   }
 }
-const getInvalidSprint = (tmpNo: number = 1, durationMin: number = 60): Task => {
+const getInvalidSprint = (tmpNo: number = 1, durationMin: number = 20): Task => {
   return {
     ID: -1*new Date().getTime(),
     CreatedAt: -1*new Date().getTime(),
@@ -73,7 +73,7 @@ const getInvalidSprint = (tmpNo: number = 1, durationMin: number = 60): Task => 
 
 
 let model: { [key: string]: Task[]; } = {
-  'TestProject': [
+  '0::TestProject': [
     {
       ID: new Date().getTime()+1,
       CreatedAt: new Date().getTime()+1,
@@ -118,7 +118,7 @@ let model: { [key: string]: Task[]; } = {
       Runs: [],
     },
   ],
-  'TestProject1': [
+  '1::TestProject1': [
     {
       ID: new Date().getTime()+1,
       CreatedAt: new Date().getTime()+1,

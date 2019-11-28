@@ -14,13 +14,12 @@ type TimeObject = {
   seconds: number,
 }
 type TaskPageProps = {
-	taskID: number,
-	taskName: string,
+	selectedTaskID: number|null,
 	typedTask: string, 
-	owningProject: string,
+	owningProjectID: number|null,
 	setTypedTask: (newTypedTask: string)=>void,
 	onCreate: (newTask: string)=>void,
-	onChangedName: (newTaskName: string)=>void,
+	onChangedName: (taskID: number, newTaskName: string)=>void,
 	onChangedDuration: (newDuration: number)=>void,
 	getElapsedTime: (thisTaskID: number)=>string,
 	getDuration: (thisTaskID: number)=>TimeObject,
@@ -29,9 +28,17 @@ type TaskPageProps = {
 
 const TaskPage: React.FC<TaskPageProps> = (props) => {
 
-	const registeredTasks = getTasks(props.owningProject)
+	const registeredTasks = props.owningProjectID === null ? [] : getTasks(props.owningProjectID)
 	const matchingTasks = registeredTasks.filter(task => task.Name.toLowerCase().indexOf(props.typedTask.toLowerCase())!==-1)
-
+	const [, setTmpRender] = useState<boolean>(false)
+	const onCreate = (newTask: string):void => {
+		props.onCreate(newTask)
+		setTmpRender(tmpRender => !tmpRender)
+	}
+	const onChangedName = (taskID: number, newTaskName: string):void => {
+		props.onChangedName(taskID, newTaskName)
+		setTmpRender(tmpRender => !tmpRender)
+	}
 	return (
 		<div className="TaskPage non-draggable">
 			<ul>
@@ -42,11 +49,12 @@ const TaskPage: React.FC<TaskPageProps> = (props) => {
 						<div className="task-text">
 							<input type="text" placeholder="Some Task" 
 											onClick={evt => evt.stopPropagation()}
+											onKeyDown={evt => evt.keyCode === 13 && onCreate(props.typedTask)}
 											value={props.typedTask}
 											onChange={evt => props.setTypedTask(evt.target.value)}/>
 						</div>				
 						<div className={`box-basic-flex task-add-btn ${matchingTasks.length===0 ? '' : 'invisible'}`}
-								 onClick={evt => props.onCreate(props.typedTask)}>
+								 onClick={evt => onCreate(props.typedTask)}>
 									 <i className="fas fa-plus"></i>
 						</div>	
 					</div>
@@ -56,7 +64,7 @@ const TaskPage: React.FC<TaskPageProps> = (props) => {
 				
 				{
 					matchingTasks.map((task, index) => {
-						let taskElapsedTime = getElapsedTime(props.owningProject, task.ID)
+						let taskElapsedTime = props.owningProjectID === null ? NaN : getElapsedTime(props.owningProjectID, task.ID)
 						return (
 							<li className="task-item" key={index} >
 								<div className="task-name">
@@ -67,7 +75,7 @@ const TaskPage: React.FC<TaskPageProps> = (props) => {
 									<input type="text" placeholder="Some task" 
 												// value={props.taskName}
 												value={task.Name}
-												onChange={evt => props.onChangedName(evt.target.value)}
+												onChange={evt => onChangedName(task.ID, evt.target.value)}
 												// onKeyDown={evt => evt.keyCode === 13 && props.setTypedTask(task.Name)}
 												onClick={evt => evt.stopPropagation()}/>
 								</div>

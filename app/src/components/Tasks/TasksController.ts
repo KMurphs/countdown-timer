@@ -13,19 +13,30 @@ type TimeObject = {
   seconds: number,
 }
 
-const getTasks = (owningProject: string): UITask[] => {
-  return model[owningProject].map(task => {
+const getTasks = (owningProjectID: number): UITask[] => {
+
+  let index = null
+  let name = ''
+  Object.keys(model).forEach(project => {
+    const [_index, _name] = project.split('::');
+    (_index === `${owningProjectID}`) && (index = parseInt(_index));
+    (_index === `${owningProjectID}`) && (name = _name);
+  })
+
+  return index !== null 
+  ? model[`${index}::${name}`].map(task => {
     return {
       DurationMs: task.DurationMs, 
       ID: task.ID, 
       Name: task.Name, 
       Status: task.Status
     }
-  })
+  }) 
+  : []
 }
 
 
-const getElapsedTime = (owningProject: string, taskID: number): string => {
+const getElapsedTime = (owningProjectID: number, taskID: number): string => {
   return `${Math.floor(Math.random()*10)}:${Math.floor(Math.random()*60)}:${Math.floor(Math.random()*60)}`
 }
 
