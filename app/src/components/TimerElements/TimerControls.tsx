@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import './TimerElements.css';
 import { TTimerActions } from '../Main/Main';
+import Controller from './timerController';
+import model from '../../model/model';
 
 
 
@@ -9,13 +11,13 @@ import { TTimerActions } from '../Main/Main';
 
 
 type TimerControlsProps = {
-	timerActions: {[key: string]: (action: TTimerActions) => void},
+	onTimerAction: (action: TTimerActions)=>void
 	invisibleControls?: TTimerActions[]
 }
 
 
 
-const TimerControls: React.FC<TimerControlsProps> = ({timerActions, invisibleControls = []}) => {
+const TimerControls: React.FC<TimerControlsProps> = ({onTimerAction, invisibleControls = []}) => {
 
 	const [isPlaying, setIsPlaying] = useState<boolean>(false)
 
@@ -25,7 +27,7 @@ const TimerControls: React.FC<TimerControlsProps> = ({timerActions, invisibleCon
 	return (
 		<div className="TimerControls non-draggable">
 
-			{/* {
+			{
 				(invisibleControls.indexOf(TTimerActions.RESTART_ALL) === -1) && (
 					<div className="box-basic-flex timer-control" onClick={evt=>onTimerAction(TTimerActions.RESTART_ALL)}><i className="fas fa-redo"></i></div>
 				)
@@ -75,7 +77,7 @@ const TimerControls: React.FC<TimerControlsProps> = ({timerActions, invisibleCon
 				(invisibleControls.indexOf(TTimerActions.STOP) === -1) && (
 					<div className="box-basic-flex timer-control" onClick={evt=>onTimerAction(TTimerActions.STOP)}><i className="fas fa-stop"></i></div>
 				)
-			}	 */}
+			}	
 			
 			
 		</div>

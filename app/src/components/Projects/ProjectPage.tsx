@@ -69,7 +69,7 @@ const ProjectPage: React.FC<ProjectPageProps> = (props) => {
 							<li className="project-item" key={projectIndex} onClick={evt => props.onSelection(projectIndex)}>
 								<div className="project-name">
 									<div className="timer-controls-container">
-										{/* <TimerControls onTimerAction={props.onTimerAction} invisibleControls={[]}/> */}
+										<TimerControls onTimerAction={props.onTimerAction} invisibleControls={[]}/>
 									</div>
 									<input type="text" placeholder="Your Awesome Project" 
 													onClick={evt => evt.stopPropagation()}

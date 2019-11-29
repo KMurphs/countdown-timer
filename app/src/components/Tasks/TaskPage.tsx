@@ -20,7 +20,7 @@ type TaskPageProps = {
 	setTypedTask: (newTypedTask: string)=>void,
 	onCreate: (newTask: string)=>void,
 	onChangedName: (taskID: number, newTaskName: string)=>void,
-	onChangedDuration: (newDuration: number)=>void,
+	onChangedDuration: (taskID: number, newDuration: number)=>void,
 	getElapsedTime: (thisTaskID: number)=>string,
 	getDuration: (thisTaskID: number)=>TimeObject,
 	onTimerAction: (action: TTimerActions)=>void,
@@ -69,8 +69,8 @@ const TaskPage: React.FC<TaskPageProps> = (props) => {
 							<li className="task-item" key={index} >
 								<div className="task-name">
 									<div className="timer-controls-container">
-										{/* <TimerControls  invisibleControls={[]} 
-																		onTimerAction={props.onTimerAction}/> */}
+										<TimerControls  invisibleControls={[]} 
+																		onTimerAction={props.onTimerAction}/>
 									</div>
 									<input type="text" placeholder="Some task" 
 												value={task.Name}
@@ -80,7 +80,7 @@ const TaskPage: React.FC<TaskPageProps> = (props) => {
 								<div className="box-basic-flex task-elapsedtime"> {taskElapsedTime} </div>
 								<div className="box-basic-flex task-divider">/</div>
 								<div className="box-basic-flex task-elapsedtime">
-									<TimerInput timeObj={convertMsToTimeObject(task.DurationMs)} onNewInput={props.onChangedDuration}/>
+									<TimerInput timeObj={convertMsToTimeObject(task.DurationMs)} onNewInput={(newDuration) => props.onChangedDuration(task.ID, newDuration)}/>
 								</div>
 								<div className="box-hmax-right task-handle"></div>
 							</li>

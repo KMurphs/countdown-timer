@@ -56,4 +56,13 @@ const convertMsToTimeObject = (durationMs: number): TimeObject => {
 
   return res
 }
-export { getTasks, getElapsedTime, convertMsToTimeObject }
+
+
+// Recursive function to prepend 0s to time fields when fields have less than 2 chars
+const padTimeField = (timeField: string, width: number = 2):string => timeField.length < width ? padTimeField('0'+timeField, width) : timeField
+
+
+const convertTimeObjectToString = ({hours, minutes, seconds}: TimeObject) => {
+  return `${hours<0?'-':' '} ${padTimeField(Math.abs(hours)+'')}:${padTimeField(Math.floor(minutes)+'')}:${padTimeField(Math.floor(seconds)+'')}`
+}
+export { getTasks, getElapsedTime, convertMsToTimeObject, convertTimeObjectToString }

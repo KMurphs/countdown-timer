@@ -1,13 +1,27 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './Main.css';
 
-import model from '../../model/model';
-import { getProjectByIndex, addTask, addProject, updateProject, updateTask } from '../../controllers.common';
-import Controller from '../TimerElements/TimerController';
+
+import model, { TaskStatus } from '../../model/model';
+import { 
+	getProjectByIndex, 
+	addTask, 
+	addProject, 
+	updateProject, 
+	updateTask, 
+	getNextValidTask, 
+	getPreviousValidTask, 
+	getTaskByIndex
+} from '../../controllers.common';
+import { convertMsToTimeObject, convertTimeObjectToString } from '../Tasks/TasksController';
+import TimerController from '../TimerElements/TimerController';
+
 
 import TimerControls from '../TimerElements/TimerControls';
 import ProjectPage from '../Projects/ProjectPage';
 import TaskPage from '../Tasks/TaskPage';
+
+
 
 
 
@@ -26,9 +40,9 @@ export enum TTimerActions {
 	STOP,
 	RESTART_ALL
 }
-const controller = new Controller(model)
-console.log(controller)
-console.log(controller.getVersion())
+let timerController = new TimerController(model)
+console.log(timerController.getVersion())
+
 const Main: React.FC = () => {
 
 
@@ -80,16 +94,106 @@ const Main: React.FC = () => {
 
 
 
+
+	// Current project and task memory
 	const [typedTask, setTypedTask] = useState<string>('')
 	const [selectedProjectID, setSelectedProjectID] = useState<number|null>(null)
 	const [selectedTaskID, setSelectedTaskID] = useState<number|null>(null)
 
+
+
+	// isRunning indicator and interval function to update timer display
+	const [isRunning, setIsRunning] = useState<boolean>(false)
+	const [elapsedTime, setElapsedTime] = useState<number|null>(null)
+	useEffect(()=>{
+
+		// If timer is not running anymore, don't setup a new interval funciton
+		if(!isRunning){
+			return ()=>{}
+		}
+
+		// set up a new interval function that will update elapsedTime for ui consumption
+		const interval = setInterval(()=>{
+			setElapsedTime(timerController.getElapsedTimeInSec(selectedProjectID, selectedTaskID))
+		}, 250)
+
+		// cleanup function: clear the interval
+		return () => clearInterval(interval)
+
+	// use effect is re-initialized whenever any of these change
+	}, [isRunning, selectedProjectID, selectedTaskID])
 	
+
+
+
+
+
+
+
+	// Timer Action handlers
+	const handleTimerAction = (projectID:number|null, taskID:number|null, action: TTimerActions) => {
+		let currentTask = null
+		projectID !== null && taskID !== null && (currentTask = getTaskByIndex(projectID, taskID));
+		setIsRunning(true)
+
+		switch(action){
+
+			// Play the next available task
+			case TTimerActions.NEXT:
+					setSelectedTaskID(taskID => {
+						let nextTaskID = getNextValidTask(projectID, taskID)
+						handleTimerAction(projectID, nextTaskID, TTimerActions.PLAY)
+						return nextTaskID
+					})
+					break
+			// Play the previous available task
+			case TTimerActions.PREVIOUS:
+					setSelectedTaskID(taskID => {
+						let prevTaskID = getPreviousValidTask(projectID, taskID)
+						handleTimerAction(projectID, prevTaskID, TTimerActions.PLAY)
+						return prevTaskID
+					})
+					break
+
+
+
+			// play task
+			case TTimerActions.PLAY:
+					currentTask !== null && currentTask.Status === TaskStatus.SCHEDULED && timerController.start(projectID, taskID)
+					currentTask !== null && currentTask.Status === TaskStatus.PAUSED && timerController.resume(projectID, taskID)
+					break
+			// pause task
+			case TTimerActions.PAUSE:
+					currentTask !== null && currentTask.Status === TaskStatus.EXECUTING && timerController.pause(projectID, taskID)
+					break
+
+
+
+			// restart project tasks		
+			case TTimerActions.RESTART_ALL:
+					currentTask !== null && timerController.restartProject(projectID)
+					break
+			// stop current task
+			case TTimerActions.STOP:
+					currentTask !== null && timerController.stop(projectID, taskID)
+					setIsRunning(false)
+					break
+			default:
+					console.log('Unsupported Timer Action: ', action)
+					// setIsRunning(false)
+					break
+		}
+	}
+
+
+
+
+
+	// UI Jsx
 	const handleNewTask = (newTask: string) => {
 		selectedProjectID !== null && setSelectedTaskID(addTask(selectedProjectID, typedTask))
 	}
-	
-		 
+
 	return (
 		<div onMouseLeave={evt => setMouseLeftAppMoment(new Date().getTime())} onMouseEnter={evt => setMouseLeftAppMoment(null)}>
 			<div className="Main">
@@ -114,7 +218,7 @@ const Main: React.FC = () => {
 				</div>
 
 				<div className="timer-display">
-					<span>12:52:23</span>
+					<span>{elapsedTime === null ? '00:00' : convertTimeObjectToString(convertMsToTimeObject(elapsedTime*1000))}</span>
 				</div>
 
 
@@ -122,18 +226,18 @@ const Main: React.FC = () => {
 
 			</div>
 		
-			{/* {
+			{
 				(selectedProjectID !== null) && (selectedTaskID !== null) && (
-					<TimerControls 	onTimerAction={(action: TTimerActions)=>console.log(TTimerActions[action])} invisibleControls={[]}/>
+					<TimerControls 	onTimerAction={(action)=>handleTimerAction(selectedProjectID, selectedTaskID, action)} invisibleControls={[]}/>
 				)
-			} */}
+			}
 			
 			
 
 			{(openedPane === TOpenedPane.PROJECT) && (
 					<ProjectPage onSelection={setSelectedProjectID} 
 											 selectedProjectID={selectedProjectID !== null ? selectedProjectID : -1} 
-											 onTimerAction={(action: TTimerActions)=>console.log(TTimerActions[action])}
+											 onTimerAction={(action)=>handleTimerAction(selectedProjectID, selectedTaskID, action)}
 											 onCreate={(newProject)=>addProject(newProject)}
 											 onRename={(projectID, newName) => updateProject(projectID, newName)}
 											 getTotalTime={project => {console.log('Obtaining total time for project ', project); return '11:52:12'}}
@@ -146,9 +250,9 @@ const Main: React.FC = () => {
 										owningProjectID={selectedProjectID}
 										typedTask={typedTask}
 										setTypedTask={setTypedTask}
-										onTimerAction={(action: TTimerActions)=>console.log(TTimerActions[action])}
+										onTimerAction={(action)=>handleTimerAction(selectedProjectID, selectedTaskID, action)}
 										onChangedName={(taskID, newName)=>selectedProjectID !== null && updateTask(selectedProjectID, taskID, {'Name': newName})}
-										onChangedDuration={(newName)=>console.log('Duration of Task with ID ', 1, ' was changed into ', newName)}
+										onChangedDuration={(taskID, newDuration)=>selectedProjectID !== null && updateTask(selectedProjectID, taskID, {'DurationMs': newDuration})}
 										onCreate={(newTask) => handleNewTask(newTask)}
 										getElapsedTime={(taskID)=>{console.log('Getting Elapsed Time on Task with ID ', taskID); return '11:02:62'}}
 										getDuration={(taskID)=>{console.log('Getting Duration of Task with ID ', taskID); return {hours: 11, minutes: 52, seconds: 24}}}/>
