@@ -5,11 +5,19 @@ import {
   getProjectByName,
   updateProject,
   addTask,
-  updateTask
+  updateTask,
+  getNextValidTask,
+  getPreviousValidTask
 } from './controllers.common'
 
 import model, { TaskStatus } from './model/model'
+import { getTasks } from './components/Tasks/TasksController'
+import Controller from './components/TimerElements/timerController'
 
+let projects = getProjects()
+let {index: projectID} = projects[0]
+let tasks = projectID === null ? [] : getTasks(projectID) 
+let task = tasks[0]
 
 
 
@@ -56,6 +64,54 @@ describe('Common Controller Functions', ()=>{
     expect(Object.keys(model)).toContain(_newtmp)
     expect(model[_newtmp][model[_newtmp].length - 1]).toHaveProperty('ID', newTaskID)
 
+  })
+  test('Can Update a Task Name', ()=>{
+
+    let oldName = task.Name
+    let newName = '123456789'
+    projectID !== null && updateTask(projectID, task.ID, {'Name': newName})
+    
+    let updatedName = projectID !== null && getTasks(projectID).filter(tmpTask => tmpTask.ID === task.ID)[0].Name
+    expect(updatedName).toBe(newName)
+    expect(updatedName === oldName).toBe(false)
+  })
+  test('Can Update a Task Duration', ()=>{
+
+    let oldDurationMs = task.DurationMs
+    let newDurationMs = 123456789
+    projectID !== null && updateTask(projectID, task.ID, {'DurationMs': newDurationMs})
+    
+    let updatedDuration = projectID !== null && getTasks(projectID).filter(tmpTask => tmpTask.ID === task.ID)[0].DurationMs
+    expect(updatedDuration).toBe(newDurationMs)
+    expect(updatedDuration === oldDurationMs).toBe(false)
+  })
+  test('Can Update a Task No', ()=>{
+
+    let oldNo = task.No
+    let newNo = oldNo + 1
+    projectID !== null && updateTask(projectID, task.ID, {'No': newNo})
+    
+    let updatedNo = projectID !== null && getTasks(projectID).filter(tmpTask => tmpTask.ID === task.ID)[0].No
+    expect(updatedNo).toBe(newNo)
+    expect(updatedNo === oldNo).toBe(false)
+  })
+  test('Can Get Next Valid Task', ()=>{
+    let taskIDs = tasks.map(task => task.ID).sort()
+    let controller = new Controller({...model})
+    controller.stop(projectID, taskIDs[taskIDs.length - 1])
+
+    taskIDs.forEach((taskID, index) => {
+      projectID !== null && expect(getNextValidTask(projectID, taskID)).toBe(taskIDs[index + 1 >= taskIDs.length - 1 ? 0 : index + 1])
+    })
+  })
+  test('Can Get Previous Valid Task', ()=>{
+    let taskIDs = tasks.map(task => task.ID).sort()
+    let controller = new Controller({...model})
+    controller.stop(projectID, taskIDs[taskIDs.length - 1])
+
+    taskIDs.forEach((taskID, index) => {
+      projectID !== null && expect(getPreviousValidTask(projectID, taskID)).toBe(taskIDs[index - 1 < 0 ? taskIDs.length - 2 : index - 1])
+    })
   })
 })
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import './App.css';
 
 import Main from './components/Main/Main';
@@ -20,15 +20,15 @@ let ipcRenderer = window.ipcRenderer
 const App: React.FC = () => {
 
 
-    const handleResize = (appHeight: TAppHeightState) : void => {
+    // const handleResize = (appHeight: TAppHeightState) : void => {
 
-        // Synchronous message emmiter and handler
-        console.log(ipcRenderer.sendSync('msgFromApp', {
-            command: 'resize-height',
-            data: appHeight === TAppHeightState.CLOSED
-        }))
+    //     // Synchronous message emmiter and handler
+    //     console.log(ipcRenderer.sendSync('msgFromApp', {
+    //         command: 'resize-height',
+    //         data: appHeight === TAppHeightState.CLOSED
+    //     }))
 
-    }
+    // }
 
 		 
 	return (

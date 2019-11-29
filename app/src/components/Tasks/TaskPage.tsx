@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import './TaskPage.css';
 import { TTimerActions } from '../Main/Main';
 import TimerControls from '../TimerElements/TimerControls';
@@ -69,8 +69,8 @@ const TaskPage: React.FC<TaskPageProps> = (props) => {
 							<li className="task-item" key={index} >
 								<div className="task-name">
 									<div className="timer-controls-container">
-										<TimerControls  invisibleControls={[]} 
-																		onTimerAction={props.onTimerAction}/>
+										{/* <TimerControls  invisibleControls={[]} 
+																		onTimerAction={props.onTimerAction}/> */}
 									</div>
 									<input type="text" placeholder="Some task" 
 												value={task.Name}

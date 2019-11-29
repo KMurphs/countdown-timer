@@ -1,4 +1,4 @@
-import model, { getDefaultSprint, Task } from './model/model'
+import model, { getDefaultSprint, Task, TaskStatus } from './model/model'
 
 
 export type TProject = {
@@ -50,7 +50,7 @@ const getProjectByName = (projectName: string):TProject => {
 const updateProject = (projectID: number, newName: string): string  => {
 
   // Each project is appended with the length of the array at the moment it was inserted as its index (i.e. <Some Index>::<Awesome Project Name>)
-  const {index, name} = getProjectByIndex(projectID)
+  const {name} = getProjectByIndex(projectID)
   let _oldName = `${projectID}::${name}`
   let _newName = `${projectID}::${newName}`
 
@@ -142,6 +142,60 @@ const updateTask = (owningProjectID: number, taskID: number, data:{[key:string]:
 
   return taskID
 }
+const getNextValidTask = (owningProjectID: number|null, currentTaskID: number|null): number|null => {
+  let owningProject
+  let nextTasks
+  let nextTask = null
+
+  // Ensure we have valid project and task
+  if(owningProjectID !== null && currentTaskID !== null){
+
+    // Get owning project
+    owningProject = getProjectByIndex(owningProjectID);
+
+    // Sort task by ascending task ids, and take task which can be run (i.e are not completed yet)
+    nextTasks = model[owningProject.key].sort((a,b) => a.ID - b.ID)
+                                        .filter(task => (task.Status !== TaskStatus.COMPLETED)||(task.ID===currentTaskID));
+
+    // Search for current task index in the filtered results, 
+    // and take next index as the index of the task that must be returned
+    let nextTaskIdx = null;
+    nextTasks.forEach((task, index) => (task.ID===currentTaskID) && (nextTaskIdx = index + 1));
+    if(nextTaskIdx !== null){
+      (nextTaskIdx >= nextTasks.length) && (nextTaskIdx = 0);
+      nextTask = nextTasks[nextTaskIdx].ID
+    }
+  }
+
+  return nextTask
+}
+const getPreviousValidTask = (owningProjectID: number|null, currentTaskID: number|null): number|null => {
+  let owningProject
+  let prevTasks
+  let prevTask = null
+
+  // Ensure we have valid project and task
+  if(owningProjectID !== null && currentTaskID !== null){
+
+    // Get owning project
+    owningProject = getProjectByIndex(owningProjectID);
+
+    // Sort task by ascending task ids, and take task which can be run (i.e are not completed yet)
+    prevTasks = model[owningProject.key].sort((a,b) => a.ID - b.ID)
+                                        .filter(task => (task.Status !== TaskStatus.COMPLETED)||(task.ID===currentTaskID));
+                                        
+    // Search for current task index in the filtered results, 
+    // and take prev index as the index of the task that must be returned
+    let prevTaskIdx = null;
+    prevTasks.forEach((task, index) => (task.ID===currentTaskID) && (prevTaskIdx = index - 1));
+    if(prevTaskIdx !== null){
+      (prevTaskIdx < 0) && (prevTaskIdx = prevTasks.length - 1);
+      prevTask = prevTasks[prevTaskIdx].ID
+    }
+  }
+
+  return prevTask
+}
 
 
 
@@ -154,5 +208,7 @@ export {
   
   getTaskByIndex,
   addTask,
-  updateTask
+  updateTask,
+  getNextValidTask,
+  getPreviousValidTask
 }

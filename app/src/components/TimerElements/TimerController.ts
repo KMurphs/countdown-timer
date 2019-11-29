@@ -1,5 +1,5 @@
-import { Task, TaskStatus, getInvalidSprint } from './model/model'
-import { getTaskByIndex, getProjectByIndex, TProject } from './controllers.common'
+import { Task, TaskStatus, getInvalidSprint } from '../../model/model'
+import { getTaskByIndex, getProjectByIndex } from '../../controllers.common'
 
 interface Controller {
   version: string,
@@ -144,7 +144,6 @@ Controller.prototype.stop = function(this: Controller, projectID: number|null, t
 
 Controller.prototype.restart = function(this: Controller, projectID: number|null, taskID: number|null): Task{
   let task: Task = getInvalidSprint()
-  let now = new Date().getTime()
 
   // Ensure we have valid project and task
   if(projectID !== null && taskID !== null){
@@ -161,7 +160,7 @@ Controller.prototype.restartProject = function(this: Controller, projectID: numb
 
   // Ensure we have valid project
   if(projectID !== null){
-    let {key: projectKey, index: projectIndex} = getProjectByIndex(projectID)
+    let {key: projectKey} = getProjectByIndex(projectID)
 
     // Restart all tasks belonging to this project
     this.model[projectKey].forEach(task => this.restart(projectID, task.ID))

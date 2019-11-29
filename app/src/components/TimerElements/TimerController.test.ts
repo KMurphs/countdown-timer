@@ -1,7 +1,7 @@
 import Controller from './timerController'
-import model, { TaskStatus } from './model/model'
-import { getProjects } from './controllers.common'
-import { getTasks } from './components/Tasks/TasksController'
+import model, { TaskStatus } from '../../model/model'
+import { getProjects } from '../../controllers.common'
+import { getTasks } from '../Tasks/TasksController'
 
 let controller = new Controller(model)
 let projects = getProjects()

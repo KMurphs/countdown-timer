@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import './Main.css';
 
-import model, { Task } from '../../model/model';
+import model from '../../model/model';
 import { getProjectByIndex, addTask, addProject, updateProject, updateTask } from '../../controllers.common';
-import Controller from '../../timerController';
+import Controller from '../TimerElements/TimerController';
 
 import TimerControls from '../TimerElements/TimerControls';
 import ProjectPage from '../Projects/ProjectPage';
@@ -122,11 +122,11 @@ const Main: React.FC = () => {
 
 			</div>
 		
-			{
+			{/* {
 				(selectedProjectID !== null) && (selectedTaskID !== null) && (
 					<TimerControls 	onTimerAction={(action: TTimerActions)=>console.log(TTimerActions[action])} invisibleControls={[]}/>
 				)
-			}
+			} */}
 			
 			
 

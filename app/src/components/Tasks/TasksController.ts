@@ -6,6 +6,7 @@ export type UITask = {
   Name: string,
   DurationMs: number,
   Status: TaskStatus,
+  No: number,
 }
 
 type TimeObject = {
@@ -24,7 +25,8 @@ const getTasks = (owningProjectID: number): UITask[] => {
       DurationMs: task.DurationMs, 
       ID: task.ID, 
       Name: task.Name, 
-      Status: task.Status
+      Status: task.Status,
+      No: task.No,
     }
   }) 
   : []
