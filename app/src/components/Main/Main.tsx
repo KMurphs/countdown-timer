@@ -13,7 +13,7 @@ import {
 	getPreviousValidTask, 
 	getTaskByIndex
 } from '../../controllers.common';
-import { convertMsToTimeObject, convertTimeObjectToString } from '../Tasks/TasksController';
+import { convertMsToTimeObject, convertTimeObjectToString, getTasks } from '../Tasks/TasksController';
 import TimerController from '../TimerElements/TimerController';
 
 
@@ -159,8 +159,13 @@ const Main: React.FC = () => {
 
 			// play task
 			case TTimerActions.PLAY:
-					currentTask !== null && currentTask.Status === TaskStatus.SCHEDULED && timerController.start(projectID, taskID)
-					currentTask !== null && currentTask.Status === TaskStatus.PAUSED && timerController.resume(projectID, taskID)
+					if(taskID !== null){
+						currentTask !== null && currentTask.Status === TaskStatus.SCHEDULED && timerController.start(projectID, taskID)
+						currentTask !== null && currentTask.Status === TaskStatus.PAUSED && timerController.resume(projectID, taskID)
+					}else{
+						handleTimerAction(projectID, taskID, TTimerActions.NEXT)
+					}
+
 					break
 			// pause task
 			case TTimerActions.PAUSE:
@@ -172,6 +177,12 @@ const Main: React.FC = () => {
 			// restart project tasks		
 			case TTimerActions.RESTART_ALL:
 					currentTask !== null && timerController.restartProject(projectID)
+
+					projectID!==null && setSelectedTaskID(() => {
+						let nextTask = getTasks(projectID).sort((a,b) => a.No-b.No)[0];
+						handleTimerAction(projectID, nextTask.ID, TTimerActions.PLAY)
+						return nextTask.ID
+					})
 					break
 			// stop current task
 			case TTimerActions.STOP:

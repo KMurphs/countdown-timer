@@ -96,7 +96,7 @@ describe('Common Controller Functions', ()=>{
     expect(updatedNo === oldNo).toBe(false)
   })
   test('Can Get Next Valid Task', ()=>{
-    let taskIDs = tasks.map(task => task.ID).sort()
+    let taskIDs = tasks.sort((a,b)=>a.No-b.No).map(task => task.ID)
     let controller = new Controller({...model})
     controller.stop(projectID, taskIDs[taskIDs.length - 1])
 
@@ -105,7 +105,7 @@ describe('Common Controller Functions', ()=>{
     })
   })
   test('Can Get Previous Valid Task', ()=>{
-    let taskIDs = tasks.map(task => task.ID).sort()
+    let taskIDs = tasks.sort((a,b)=>a.No-b.No).map(task => task.ID)
     let controller = new Controller({...model})
     controller.stop(projectID, taskIDs[taskIDs.length - 1])
 

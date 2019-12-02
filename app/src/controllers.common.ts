@@ -153,8 +153,8 @@ const getNextValidTask = (owningProjectID: number|null, currentTaskID: number|nu
     // Get owning project
     owningProject = getProjectByIndex(owningProjectID);
 
-    // Sort task by ascending task ids, and take task which can be run (i.e are not completed yet)
-    nextTasks = model[owningProject.key].sort((a,b) => a.ID - b.ID)
+    // Sort task by ascending task Nos, and take task which can be run (i.e are not completed yet)
+    nextTasks = model[owningProject.key].sort((a,b) => a.No - b.No)
                                         .filter(task => (task.Status !== TaskStatus.COMPLETED)||(task.ID===currentTaskID));
 
     // Search for current task index in the filtered results, 
@@ -181,7 +181,7 @@ const getPreviousValidTask = (owningProjectID: number|null, currentTaskID: numbe
     owningProject = getProjectByIndex(owningProjectID);
 
     // Sort task by ascending task ids, and take task which can be run (i.e are not completed yet)
-    prevTasks = model[owningProject.key].sort((a,b) => a.ID - b.ID)
+    prevTasks = model[owningProject.key].sort((a,b) => a.No - b.No)
                                         .filter(task => (task.Status !== TaskStatus.COMPLETED)||(task.ID===currentTaskID));
                                         
     // Search for current task index in the filtered results, 

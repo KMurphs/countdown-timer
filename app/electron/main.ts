@@ -16,7 +16,7 @@ type msg = {
 function createWindow() {
     // Create the browser window.
     mainWindow = new BrowserWindow({
-        width: 500,
+        width: 550,
         height: 800,
         transparent: true,
         frame:false,

@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import './TimerElements.css';
 import { TTimerActions } from '../Main/Main';
-import Controller from './timerController';
-import model from '../../model/model';
+
 
 
 
