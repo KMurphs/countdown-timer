@@ -10,6 +10,7 @@ export type UITask = {
 }
 
 type TimeObject = {
+  isNeg: boolean,
   hours: number,
   minutes: number,
   seconds: number,
@@ -42,6 +43,7 @@ const convertMsToTimeObject = (durationMs: number): TimeObject => {
   
   let ms = Math.abs(durationMs)
   let res: TimeObject = {
+    isNeg: durationMs < 0,
     hours: 0,
     minutes: 0,
     seconds: 0
@@ -52,7 +54,6 @@ const convertMsToTimeObject = (durationMs: number): TimeObject => {
   res.minutes = Math.floor((ms - res.hours*3600000)/60000)
   res.seconds = Math.floor((ms - res.hours*3600000 - res.minutes*60000)/1000)
 
-  durationMs < 0 && (res.hours = res.hours * -1)
 
   return res
 }
@@ -62,7 +63,7 @@ const convertMsToTimeObject = (durationMs: number): TimeObject => {
 const padTimeField = (timeField: string, width: number = 2):string => timeField.length < width ? padTimeField('0'+timeField, width) : timeField
 
 
-const convertTimeObjectToString = ({hours, minutes, seconds}: TimeObject) => {
-  return `${hours<0?'-':' '} ${padTimeField(Math.abs(hours)+'')}:${padTimeField(Math.floor(minutes)+'')}:${padTimeField(Math.floor(seconds)+'')}`
+const convertTimeObjectToString = ({isNeg, hours, minutes, seconds}: TimeObject) => {
+  return `${isNeg?'-':' '}${padTimeField(Math.abs(hours)+'')}:${padTimeField(Math.floor(minutes)+'')}:${padTimeField(Math.floor(seconds)+'')}`
 }
 export { getTasks, formatElapsedTime, convertMsToTimeObject, convertTimeObjectToString }

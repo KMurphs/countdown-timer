@@ -12,12 +12,17 @@ export interface Task{
   StartedAt: number,
   
   Status: TaskStatus,
-  Pauses: Laps[],
-  Runs: Laps[],
+  Pauses: Pause[],
+  Runs: Run[],
 }
-export interface Laps{
-  lapsMoment: number,
-  lapsDuration: number,
+export interface Pause{
+  pauseStartedAt: number,
+  pauseDuration: number,
+}
+export interface Run{
+  runStartedAt: number,
+  runDuration: number,
+  runOverTime: number
 }
 export enum TaskStatus{
   SCHEDULED = 0,

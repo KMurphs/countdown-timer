@@ -161,8 +161,11 @@ const Main: React.FC = () => {
 			// play task
 			case TTimerActions.PLAY:
 					if(taskID !== null){
+						selectedProjectID !== null && getTasks(selectedProjectID).map(task => task.Status === TaskStatus.EXECUTING && timerController.pause(selectedProjectID, task.ID))
 						currentTask !== null && currentTask.Status === TaskStatus.SCHEDULED && timerController.start(projectID, taskID)
 						currentTask !== null && currentTask.Status === TaskStatus.PAUSED && timerController.resume(projectID, taskID)
+						currentTask !== null && setTypedTask(currentTask.Name)
+						currentTask !== null && setSelectedTaskID(currentTask.ID)
 					}else{
 						handleTimerAction(projectID, taskID, TTimerActions.NEXT)
 					}
@@ -177,7 +180,7 @@ const Main: React.FC = () => {
 
 			// restart project tasks		
 			case TTimerActions.RESTART_ALL:
-					currentTask !== null && timerController.restartProject(projectID)
+					currentTask !== null && timerController.resetProject(projectID)
 
 					projectID!==null && setSelectedTaskID(() => {
 						let nextTask = getTasks(projectID).sort((a,b) => a.No-b.No)[0];
@@ -240,7 +243,9 @@ const Main: React.FC = () => {
 		
 			{
 				(selectedProjectID !== null) && (selectedTaskID !== null) && (
-					<TimerControls 	onTimerAction={(action)=>handleTimerAction(selectedProjectID, selectedTaskID, action)} invisibleControls={[]}/>
+					<TimerControls 	onTimerAction={(action)=>handleTimerAction(selectedProjectID, selectedTaskID, action)} 
+													isPlaying={ getTaskByIndex(selectedProjectID, selectedTaskID).Status === TaskStatus.EXECUTING } 
+													invisibleControls={[]}/>
 				)
 			}
 			
@@ -249,6 +254,7 @@ const Main: React.FC = () => {
 			{(openedPane === TOpenedPane.PROJECT) && (
 					<ProjectPage onSelection={setSelectedProjectID} 
 											 selectedProjectID={selectedProjectID !== null ? selectedProjectID : -1} 
+											 selectedTaskID={selectedTaskID !== null ? selectedTaskID : -1} 
 											 onTimerAction={(action)=>handleTimerAction(selectedProjectID, selectedTaskID, action)}
 											 onCreate={(newProject)=>addProject(newProject)}
 											 onRename={(projectID, newName) => updateProject(projectID, newName)}
@@ -260,9 +266,10 @@ const Main: React.FC = () => {
 			{(openedPane === TOpenedPane.TASK) && (selectedProjectID !== null) && (
 					<TaskPage selectedTaskID={selectedTaskID}
 										owningProjectID={selectedProjectID}
+										// onSelection={setSelectedTaskID} 
 										typedTask={typedTask}
 										setTypedTask={setTypedTask}
-										onTimerAction={(action)=>handleTimerAction(selectedProjectID, selectedTaskID, action)}
+										onTimerAction={(action, taskID?)=>handleTimerAction(selectedProjectID, taskID ? taskID : selectedTaskID, action)}
 										onChangedName={(taskID, newName)=>selectedProjectID !== null && updateTask(selectedProjectID, taskID, {'Name': newName})}
 										onChangedDuration={(taskID, newDuration)=>selectedProjectID !== null && updateTask(selectedProjectID, taskID, {'DurationMs': newDuration})}
 										onCreate={(newTask) => handleNewTask(newTask)}

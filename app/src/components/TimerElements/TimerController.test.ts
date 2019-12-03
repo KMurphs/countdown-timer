@@ -1,6 +1,6 @@
 import Controller from './timerController'
 import model, { TaskStatus } from '../../model/model'
-import { getProjects, getTaskByIndex } from '../../controllers.common'
+import { getProjects, getTaskByIndex, updateTask } from '../../controllers.common'
 import { getTasks } from '../Tasks/TasksController'
 
 let controller = new Controller(model)
@@ -134,7 +134,6 @@ describe('Main Controller Functions', ()=>{
       }, timeoutScheduleMs)
     })
   })
-
   test('Task Stops countdown', async()=>{
     let timeoutScheduleMs: number
     let elapsedSecs: number|null
@@ -174,7 +173,6 @@ describe('Main Controller Functions', ()=>{
       }, timeoutScheduleMs)
     })
   })
-
   test('Task Restarts countdown', async()=>{
     let timeoutScheduleMs: number
     let elapsedSecs: number|null
@@ -209,5 +207,22 @@ describe('Main Controller Functions', ()=>{
       }, timeoutScheduleMs)
     })
 
+  })
+  test('Elapsed time goes negative', async ()=>{
+    expect(projectID === null).toBe(false)
+    projectID !== null && updateTask(projectID, task.ID, {'DurationMs': 100})
+    controller.reset(projectID, task.ID)
+    controller.start(projectID, task.ID)
+    
+    await new Promise(resolve => {
+      let timeoutScheduleMs = 200
+      setTimeout(()=>{
+        let elapsedTime = controller.getElapsedTimeInSec(projectID, task.ID)
+        expect(elapsedTime).toBeGreaterThan((100 - timeoutScheduleMs - 100)/1000)
+        expect(elapsedTime).toBeLessThan((100 - timeoutScheduleMs + 100)/1000)
+        expect(elapsedTime).toBeLessThan(0)
+        resolve()
+      }, timeoutScheduleMs)
+    })
   })
 })

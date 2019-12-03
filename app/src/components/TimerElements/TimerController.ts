@@ -80,8 +80,8 @@ Controller.prototype.resume = function(this: Controller, projectID: number|null,
 
       // Save this Pause Time span before re-enabling the timer
       task.Pauses.push({
-        lapsMoment: task.PausedAt,
-        lapsDuration: now - task.PausedAt
+        pauseStartedAt: task.PausedAt,
+        pauseDuration: now - task.PausedAt
       })
       task.OpStart = task.OpStart + now - task.PausedAt
       task.PausedAt = -1
@@ -107,8 +107,8 @@ Controller.prototype.stop = function(this: Controller, projectID: number|null, t
         // If Paused, saved pause time span, and reset task
         case TaskStatus.PAUSED:
           task.Pauses.push({
-            lapsMoment: task.PausedAt,
-            lapsDuration: now - task.PausedAt
+            pauseStartedAt: task.PausedAt,
+            pauseDuration: now - task.PausedAt
           })
           task.PausedAt = -1
           task.OpStart = -1
@@ -119,8 +119,9 @@ Controller.prototype.stop = function(this: Controller, projectID: number|null, t
         // If Running, saved run time span, and reset task
         case TaskStatus.EXECUTING:
           task.Runs.push({
-            lapsMoment: task.StartedAt,
-            lapsDuration: now - task.StartedAt
+            runStartedAt: task.StartedAt,
+            runDuration: now - task.StartedAt,
+            runOverTime: now - task.StartedAt > task.DurationMs ? (now - task.StartedAt - task.DurationMs)/task.DurationMs : 0
           })
           task.PausedAt = -1
           task.OpStart = -1

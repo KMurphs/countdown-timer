@@ -4,6 +4,8 @@ import { TTimerActions } from '../Main/Main';
 import TimerControls from '../TimerElements/TimerControls';
 import TimerInput from '../TimerElements/TimerInput';
 import { getTasks, convertMsToTimeObject, formatElapsedTime } from './TasksController';
+import { getTaskByIndex } from '../../controllers.common';
+import { TaskStatus } from '../../model/model';
 
 
 
@@ -23,7 +25,7 @@ type TaskPageProps = {
 	onChangedDuration: (taskID: number, newDuration: number)=>void,
 	getElapsedTime: (thisTaskID: number)=>number|null,
 	getDuration: (thisTaskID: number)=>TimeObject,
-	onTimerAction: (action: TTimerActions)=>void,
+	onTimerAction: (action: TTimerActions, taskID? : number)=>void,
 }
 
 const TaskPage: React.FC<TaskPageProps> = (props) => {
@@ -66,11 +68,17 @@ const TaskPage: React.FC<TaskPageProps> = (props) => {
 					matchingTasks.map((task, index) => {
 						let taskElapsedTime = props.owningProjectID === null ? NaN : formatElapsedTime(props.getElapsedTime(task.ID))
 						return (
-							<li className="task-item" key={index} >
+							<li className="task-item" key={task.ID} >
 								<div className="task-name">
 									<div className="timer-controls-container">
 										<TimerControls  invisibleControls={[]} 
-																		onTimerAction={props.onTimerAction}/>
+																		isPlaying={ props.owningProjectID !== null 
+																								&& props.selectedTaskID !== null 
+																								&& props.selectedTaskID === task.ID
+																								&& getTaskByIndex(props.owningProjectID, props.selectedTaskID).Status === TaskStatus.EXECUTING } 
+																		onTimerAction={(action) => {
+																			props.onTimerAction(action, task.ID)
+																		}}/>
 									</div>
 									<input type="text" placeholder="Some task" 
 												value={task.Name}

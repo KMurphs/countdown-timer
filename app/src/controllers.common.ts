@@ -1,4 +1,4 @@
-import model, { getDefaultSprint, Task, TaskStatus } from './model/model'
+import model, { getDefaultSprint, Task, TaskStatus, getInvalidSprint } from './model/model'
 
 
 export type TProject = {
@@ -85,6 +85,9 @@ const getProjects = ():TProject[] => {
 const getTaskByIndex = (owningProjectID: number, taskID: number): Task  => {
 
   let owningProject = getProjectByIndex(owningProjectID)
+  if(owningProject.index === null){
+    return getInvalidSprint()
+  }
 
   let [task] = model[owningProject.key].filter(tmpTask => tmpTask.ID === taskID)
 
@@ -152,6 +155,9 @@ const getNextValidTask = (owningProjectID: number|null, currentTaskID: number|nu
 
     // Get owning project
     owningProject = getProjectByIndex(owningProjectID);
+    if(owningProject.index === null){
+      return nextTask
+    }
 
     // Sort task by ascending task Nos, and take task which can be run (i.e are not completed yet)
     nextTasks = model[owningProject.key].sort((a,b) => a.No - b.No)
@@ -179,6 +185,9 @@ const getPreviousValidTask = (owningProjectID: number|null, currentTaskID: numbe
 
     // Get owning project
     owningProject = getProjectByIndex(owningProjectID);
+    if(owningProject.index === null){
+      return prevTask
+    }
 
     // Sort task by ascending task ids, and take task which can be run (i.e are not completed yet)
     prevTasks = model[owningProject.key].sort((a,b) => a.No - b.No)

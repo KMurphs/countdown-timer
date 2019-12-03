@@ -12,13 +12,14 @@ import { TTimerActions } from '../Main/Main';
 type TimerControlsProps = {
 	onTimerAction: (action: TTimerActions)=>void
 	invisibleControls?: TTimerActions[]
+	isPlaying: boolean
 }
 
 
 
-const TimerControls: React.FC<TimerControlsProps> = ({onTimerAction, invisibleControls = []}) => {
+const TimerControls: React.FC<TimerControlsProps> = ({onTimerAction, isPlaying, invisibleControls = []}) => {
 
-	const [isPlaying, setIsPlaying] = useState<boolean>(false)
+	// const [isPlaying, setIsPlaying] = useState<boolean>(false)
 
 
 
@@ -44,7 +45,7 @@ const TimerControls: React.FC<TimerControlsProps> = ({onTimerAction, invisibleCo
 				!isPlaying && (
 					<div className="box-basic-flex timer-control" 
 							 onClick={(evt => {
-									setIsPlaying(isPlaying=>!isPlaying); 
+									// setIsPlaying(isPlaying=>!isPlaying); 
 									onTimerAction(TTimerActions.PLAY)
 							 })}>
 						<i className="fas fa-play"></i>
@@ -55,7 +56,7 @@ const TimerControls: React.FC<TimerControlsProps> = ({onTimerAction, invisibleCo
 				isPlaying && (
 					<div className="box-basic-flex timer-control" 
 							 onClick={(evt => {
-									setIsPlaying(isPlaying=>!isPlaying); 
+									// setIsPlaying(isPlaying=>!isPlaying); 
 									onTimerAction(TTimerActions.PAUSE)
 							 })}>
 						<i className="fas fa-pause"></i>

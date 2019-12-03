@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import './ProjectPage.css';
 import TimerControls from '../TimerElements/TimerControls';
 import { TTimerActions } from '../Main/Main';
-import { getProjects} from '../../controllers.common'
+import { getProjects, getTaskByIndex} from '../../controllers.common'
 import { getTotalTime, getOvertime } from './ProjectsController'
+import { TaskStatus } from '../../model/model';
 
 
 
@@ -12,6 +13,7 @@ import { getTotalTime, getOvertime } from './ProjectsController'
 
 type ProjectPageProps = {
 	selectedProjectID: number,
+	selectedTaskID: number,
 	onRename: (projectID: number, newName: string)=>void,
 	onSelection: (selectedProjectID: number)=>void,
 	onCreate: (newProject: string)=>void,
@@ -37,7 +39,7 @@ const ProjectPage: React.FC<ProjectPageProps> = (props) => {
 		props.onRename(projectID, newName)
 		setTmpRender(tmpRender => !tmpRender)
 	}
-	console.log(registeredProjects)
+	let currentTask = getTaskByIndex(props.selectedProjectID, props.selectedTaskID)
 	return (
 		<div className="ProjectPage non-draggable">
 			<ul>
@@ -69,7 +71,8 @@ const ProjectPage: React.FC<ProjectPageProps> = (props) => {
 							<li className="project-item" key={projectIndex} onClick={evt => props.onSelection(projectIndex)}>
 								<div className="project-name">
 									<div className="timer-controls-container">
-										<TimerControls onTimerAction={props.onTimerAction} invisibleControls={[]}/>
+										<TimerControls onTimerAction={props.onTimerAction} invisibleControls={[]} 																		
+																	 isPlaying={ currentTask && projectIndex === props.selectedProjectID && currentTask.Status === TaskStatus.EXECUTING } />
 									</div>
 									<input type="text" placeholder="Your Awesome Project" 
 													onClick={evt => evt.stopPropagation()}
@@ -78,7 +81,7 @@ const ProjectPage: React.FC<ProjectPageProps> = (props) => {
 													onChange={evt => onRename(projectIndex, evt.target.value)}/>
 								</div>
 								<div className="box-basic-flex project-elapsedtime">{projectTotalTime}</div>
-								<div className="box-basic-flex project-overtime">{`${projectOverTime>0?'+':''}${projectOverTime}%`}</div>
+								<div className="box-basic-flex project-overtime">{`${projectOverTime}%`}</div>
 								<label className="box-basic-flex item-selector">
 									<input type="checkbox" checked={props.selectedProjectID===projectIndex} onChange={evt => props.onSelection(projectIndex)}/>
 									<span className="item-checkmark"></span>
