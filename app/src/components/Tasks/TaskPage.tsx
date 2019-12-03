@@ -3,7 +3,7 @@ import './TaskPage.css';
 import { TTimerActions } from '../Main/Main';
 import TimerControls from '../TimerElements/TimerControls';
 import TimerInput from '../TimerElements/TimerInput';
-import { getTasks, getElapsedTime, convertMsToTimeObject } from './TasksController';
+import { getTasks, convertMsToTimeObject, formatElapsedTime } from './TasksController';
 
 
 
@@ -21,7 +21,7 @@ type TaskPageProps = {
 	onCreate: (newTask: string)=>void,
 	onChangedName: (taskID: number, newTaskName: string)=>void,
 	onChangedDuration: (taskID: number, newDuration: number)=>void,
-	getElapsedTime: (thisTaskID: number)=>string,
+	getElapsedTime: (thisTaskID: number)=>number|null,
 	getDuration: (thisTaskID: number)=>TimeObject,
 	onTimerAction: (action: TTimerActions)=>void,
 }
@@ -64,7 +64,7 @@ const TaskPage: React.FC<TaskPageProps> = (props) => {
 				
 				{
 					matchingTasks.map((task, index) => {
-						let taskElapsedTime = props.owningProjectID === null ? NaN : getElapsedTime(props.owningProjectID, task.ID)
+						let taskElapsedTime = props.owningProjectID === null ? NaN : formatElapsedTime(props.getElapsedTime(task.ID))
 						return (
 							<li className="task-item" key={index} >
 								<div className="task-name">

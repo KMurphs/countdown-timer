@@ -9,8 +9,8 @@ interface Controller {
   pause: (projectID: number|null, taskID: number|null)=>Task,
   resume: (projectID: number|null, taskID: number|null)=>Task,
   stop: (projectID: number|null, taskID: number|null)=>Task,
-  restart: (projectID: number|null, taskID: number|null)=>Task,
-  restartProject: (projectID: number|null)=>number|null,
+  reset: (projectID: number|null, taskID: number|null)=>Task,
+  resetProject: (projectID: number|null)=>number|null,
   getElapsedTimeInSec: (projectID: number|null, taskID: number|null)=> number|null,
 }
 
@@ -83,8 +83,8 @@ Controller.prototype.resume = function(this: Controller, projectID: number|null,
         lapsMoment: task.PausedAt,
         lapsDuration: now - task.PausedAt
       })
-      task.PausedAt = -1
       task.OpStart = task.OpStart + now - task.PausedAt
+      task.PausedAt = -1
       task.Status = TaskStatus.EXECUTING
     }
   }
@@ -142,7 +142,7 @@ Controller.prototype.stop = function(this: Controller, projectID: number|null, t
   return {...task}
 }
 
-Controller.prototype.restart = function(this: Controller, projectID: number|null, taskID: number|null): Task{
+Controller.prototype.reset = function(this: Controller, projectID: number|null, taskID: number|null): Task{
   let task: Task = getInvalidSprint()
 
   // Ensure we have valid project and task
@@ -156,14 +156,14 @@ Controller.prototype.restart = function(this: Controller, projectID: number|null
 
   return {...task}
 }
-Controller.prototype.restartProject = function(this: Controller, projectID: number|null): number|null{
+Controller.prototype.resetProject = function(this: Controller, projectID: number|null): number|null{
 
   // Ensure we have valid project
   if(projectID !== null){
     let {key: projectKey} = getProjectByIndex(projectID)
 
-    // Restart all tasks belonging to this project
-    this.model[projectKey].forEach(task => this.restart(projectID, task.ID))
+    // Reset all tasks belonging to this project
+    this.model[projectKey].forEach(task => this.reset(projectID, task.ID))
   }
 
   return projectID
@@ -190,7 +190,7 @@ Controller.prototype.getElapsedTimeInSec = function(this: Controller, projectID:
 
     // Timer is paused
     if(task.Status === TaskStatus.PAUSED){
-      msValue = task.PausedAt - task.OpStart
+      msValue = task.DurationMs - task.PausedAt + task.OpStart
     }
 
   }

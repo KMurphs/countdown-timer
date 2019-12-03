@@ -1,6 +1,6 @@
 import Controller from './timerController'
 import model, { TaskStatus } from '../../model/model'
-import { getProjects } from '../../controllers.common'
+import { getProjects, getTaskByIndex } from '../../controllers.common'
 import { getTasks } from '../Tasks/TasksController'
 
 let controller = new Controller(model)
@@ -16,8 +16,10 @@ let task = tasks[0]
 //   - Status: TaskStatus,
 
 
+jest.setTimeout(10000)
 
 describe('Main Controller Functions', ()=>{
+  const getTaskStatus = (projectID: number|null, taskID: number) => getTaskByIndex(projectID === null ? -1 : projectID, taskID).Status
   test('Can Get Controller Version', ()=>{
     expect(controller.getVersion()).toBe('2.0')
   })
@@ -25,139 +27,187 @@ describe('Main Controller Functions', ()=>{
     expect(controller.getElapsedTimeInSec(projectID, task.ID)).toBe(task.DurationMs/1000)
     expect(task.Status).toBe(TaskStatus.SCHEDULED)
   })
-  test('Task Starts countdown', ()=>{
+  test('Task Starts countdown', async ()=>{
     let timeoutScheduleMs: number
     
     expect(task.Status).toBe(TaskStatus.SCHEDULED)
     expect(controller.getElapsedTimeInSec(projectID, task.ID)).toBe(task.DurationMs/1000)
     controller.start(projectID, task.ID)
 
-    timeoutScheduleMs = 200
-    setTimeout(()=>{
-      expect(task.Status).toBe(TaskStatus.EXECUTING)
-      expect(controller.getElapsedTimeInSec(projectID, task.ID)).toBeGreaterThan((task.DurationMs - timeoutScheduleMs + 1)/1000)
-      expect(controller.getElapsedTimeInSec(projectID, task.ID)).toBeLessThan((task.DurationMs - timeoutScheduleMs - 1)/1000)
-    }, timeoutScheduleMs)
     
-    timeoutScheduleMs = 300
-    setTimeout(()=>{
-      expect(task.Status).toBe(TaskStatus.EXECUTING)
-      expect(controller.getElapsedTimeInSec(projectID, task.ID)).toBeGreaterThan((task.DurationMs - timeoutScheduleMs + 1)/1000)
-      expect(controller.getElapsedTimeInSec(projectID, task.ID)).toBeLessThan((task.DurationMs - timeoutScheduleMs - 1)/1000)
-    }, timeoutScheduleMs)
+    await new Promise(resolve => {
+      timeoutScheduleMs = 200
+      setTimeout(()=>{
+        let elapsedTime = controller.getElapsedTimeInSec(projectID, task.ID)
+        expect(getTaskStatus(projectID, task.ID)).toBe(TaskStatus.EXECUTING)
+        expect(elapsedTime).toBeGreaterThan((task.DurationMs - timeoutScheduleMs - 100)/1000)
+        expect(elapsedTime).toBeLessThan((task.DurationMs - timeoutScheduleMs + 100)/1000)
+        resolve()
+      }, timeoutScheduleMs)
+    })
+
+    await new Promise(resolve => {
+      timeoutScheduleMs = 200
+      setTimeout(()=>{
+        let elapsedTime = controller.getElapsedTimeInSec(projectID, task.ID)
+        expect(getTaskStatus(projectID, task.ID)).toBe(TaskStatus.EXECUTING)
+        expect(elapsedTime).toBeGreaterThan((task.DurationMs - 2*timeoutScheduleMs - 100)/1000)
+        expect(elapsedTime).toBeLessThan((task.DurationMs - 2*timeoutScheduleMs + 100)/1000)
+        resolve()
+      }, timeoutScheduleMs)
+    })
   })
-  test('Task Pauses countdown', ()=>{
+  test('Task Pauses countdown', async()=>{
+    let timeoutScheduleMs: number
+    let elapsedTime: number|null = null
+
+    await new Promise(resolve => {
+      timeoutScheduleMs = 200
+      setTimeout(()=>{
+        elapsedTime = controller.getElapsedTimeInSec(projectID, task.ID)
+        expect(getTaskStatus(projectID, task.ID)).toBe(TaskStatus.EXECUTING)
+        expect(elapsedTime).toBeGreaterThan((task.DurationMs - 3*timeoutScheduleMs - 100)/1000)
+        expect(elapsedTime).toBeLessThan((task.DurationMs - 3*timeoutScheduleMs + 100)/1000)
+        resolve()
+      }, timeoutScheduleMs)
+    })
+
+    await new Promise(resolve => {
+      timeoutScheduleMs = 200
+      setTimeout(()=>{
+        elapsedTime = controller.getElapsedTimeInSec(projectID, task.ID)
+        controller.pause(projectID, task.ID)
+        expect(getTaskStatus(projectID, task.ID)).toBe(TaskStatus.PAUSED)
+        expect(controller.getElapsedTimeInSec(projectID, task.ID) === null).toBe(false)
+        elapsedTime !== null && expect(controller.getElapsedTimeInSec(projectID, task.ID)).toBeGreaterThan((elapsedTime - 0.002))
+        elapsedTime !== null && expect(controller.getElapsedTimeInSec(projectID, task.ID)).toBeLessThan((elapsedTime + 0.002))
+        resolve()
+      }, timeoutScheduleMs)
+    })
+
+    await new Promise(resolve => {
+      timeoutScheduleMs = 200
+      setTimeout(()=>{
+        expect(controller.getElapsedTimeInSec(projectID, task.ID) === null).toBe(false)
+        elapsedTime !== null && expect(controller.getElapsedTimeInSec(projectID, task.ID)).toBeGreaterThan((elapsedTime - 0.002))
+        elapsedTime !== null && expect(controller.getElapsedTimeInSec(projectID, task.ID)).toBeLessThan((elapsedTime + 0.002))
+        resolve()
+      }, timeoutScheduleMs)
+    })
+  })
+  test('Task Resumes countdown', async()=>{
     let timeoutScheduleMs: number
     let elapsedSecs: number|null
 
-    timeoutScheduleMs = 400
-    setTimeout(()=>{
-      expect(task.Status).toBe(TaskStatus.EXECUTING)
-      elapsedSecs = controller.getElapsedTimeInSec(projectID, task.ID)
-      controller.pause(projectID, task.ID)
-      expect(elapsedSecs === null).toBe(false)
-    }, timeoutScheduleMs)
+    await new Promise(resolve => {
+      timeoutScheduleMs = 200
+      setTimeout(()=>{
+        elapsedSecs = controller.getElapsedTimeInSec(projectID, task.ID)
+        expect(elapsedSecs === null).toBe(false)
+        expect(getTaskStatus(projectID, task.ID)).toBe(TaskStatus.PAUSED)
+        controller.resume(projectID, task.ID)
+        expect(getTaskStatus(projectID, task.ID)).toBe(TaskStatus.EXECUTING)
+        resolve()
+      }, timeoutScheduleMs)
+    })
 
-    timeoutScheduleMs = 500
-    setTimeout(()=>{
-      expect(task.Status).toBe(TaskStatus.PAUSED)
-      expect(controller.getElapsedTimeInSec(projectID, task.ID)).toBe(elapsedSecs)
-      expect(elapsedSecs === null).toBe(false)
-    }, timeoutScheduleMs)
-    
-    timeoutScheduleMs = 600
-    setTimeout(()=>{
-      expect(task.Status).toBe(TaskStatus.PAUSED)
-      expect(controller.getElapsedTimeInSec(projectID, task.ID)).toBe(elapsedSecs)
-      expect(elapsedSecs === null).toBe(false)
-    }, timeoutScheduleMs)
+
+    await new Promise(resolve => {
+      timeoutScheduleMs = 200
+      setTimeout(()=>{
+        expect(getTaskStatus(projectID, task.ID)).toBe(TaskStatus.EXECUTING)
+        expect(elapsedSecs === null).toBe(false)
+        elapsedSecs !== null && expect(controller.getElapsedTimeInSec(projectID, task.ID)).toBeGreaterThan((elapsedSecs - 0.300))
+        elapsedSecs !== null && expect(controller.getElapsedTimeInSec(projectID, task.ID)).toBeLessThan((elapsedSecs + 0.300))
+        resolve()
+      }, timeoutScheduleMs)
+    })
+
+    await new Promise(resolve => {
+      timeoutScheduleMs = 200
+      setTimeout(()=>{
+        expect(getTaskStatus(projectID, task.ID)).toBe(TaskStatus.EXECUTING)
+        expect(elapsedSecs === null).toBe(false)
+        elapsedSecs !== null && expect(controller.getElapsedTimeInSec(projectID, task.ID)).toBeGreaterThan((elapsedSecs - 0.500))
+        elapsedSecs !== null && expect(controller.getElapsedTimeInSec(projectID, task.ID)).toBeLessThan((elapsedSecs + 0.500))
+        resolve()
+      }, timeoutScheduleMs)
+    })
   })
-  test('Task Resumes countdown', ()=>{
-    let timeoutScheduleMs: number
-    let _elapsedSecs: number|null
-    let elapsedSecs: number
 
-    timeoutScheduleMs = 700
-    setTimeout(()=>{
-      expect(task.Status).toBe(TaskStatus.PAUSED)
-      _elapsedSecs = controller.getElapsedTimeInSec(projectID, task.ID)
-      controller.resume(projectID, task.ID)
-      expect(_elapsedSecs === null).toBe(false)
-      elapsedSecs = _elapsedSecs === null ? -1 : _elapsedSecs
-    }, timeoutScheduleMs)
-
-    timeoutScheduleMs = 800
-    setTimeout(()=>{
-      expect(task.Status).toBe(TaskStatus.EXECUTING)
-      expect(controller.getElapsedTimeInSec(projectID, task.ID)).toBeGreaterThan((elapsedSecs + 100 + 1)/1000)
-      expect(controller.getElapsedTimeInSec(projectID, task.ID)).toBeLessThan((elapsedSecs + 100 - 1)/1000)
-    }, timeoutScheduleMs)
-    
-    timeoutScheduleMs = 900
-    setTimeout(()=>{
-      expect(task.Status).toBe(TaskStatus.EXECUTING)
-      expect(controller.getElapsedTimeInSec(projectID, task.ID)).toBeGreaterThan((elapsedSecs + 200 + 1)/1000)
-      expect(controller.getElapsedTimeInSec(projectID, task.ID)).toBeLessThan((elapsedSecs + 200 - 1)/1000)
-    }, timeoutScheduleMs)
-  })
-  test('Task Stops countdown', ()=>{
+  test('Task Stops countdown', async()=>{
     let timeoutScheduleMs: number
     let elapsedSecs: number|null
 
-    timeoutScheduleMs = 1000
-    setTimeout(()=>{
-      expect(task.Status).toBe(TaskStatus.EXECUTING)
-      controller.stop(projectID, task.ID)
-      elapsedSecs = controller.getElapsedTimeInSec(projectID, task.ID)
-      expect(task.Status).toBe(TaskStatus.COMPLETED)
-      expect(elapsedSecs === null).toBe(false)
-      expect(elapsedSecs).toBe(task.DurationMs/1000)
-    }, timeoutScheduleMs)
+    await new Promise(resolve => {
+      timeoutScheduleMs = 200
+      setTimeout(()=>{
+        expect(getTaskStatus(projectID, task.ID)).toBe(TaskStatus.EXECUTING)
+        controller.stop(projectID, task.ID)
+        elapsedSecs = controller.getElapsedTimeInSec(projectID, task.ID)
+        expect(getTaskStatus(projectID, task.ID)).toBe(TaskStatus.COMPLETED)
+        expect(elapsedSecs === null).toBe(false)
+        elapsedSecs !== null && expect(elapsedSecs).toBe(task.DurationMs/1000)
+        resolve()
+      }, timeoutScheduleMs)
+    })
 
-    timeoutScheduleMs = 1050
-    setTimeout(()=>{
-      elapsedSecs = controller.getElapsedTimeInSec(projectID, task.ID)
-      expect(task.Status).toBe(TaskStatus.COMPLETED)
-      expect(elapsedSecs === null).toBe(false)
-      expect(elapsedSecs).toBe(task.DurationMs/1000)
-    }, timeoutScheduleMs)
+    await new Promise(resolve => {
+      timeoutScheduleMs = 200
+      setTimeout(()=>{
+        elapsedSecs = controller.getElapsedTimeInSec(projectID, task.ID)
+        expect(getTaskStatus(projectID, task.ID)).toBe(TaskStatus.COMPLETED)
+        expect(elapsedSecs === null).toBe(false)
+        elapsedSecs !== null && expect(elapsedSecs).toBe(task.DurationMs/1000)
+        resolve()
+      }, timeoutScheduleMs)
+    })
     
-    timeoutScheduleMs = 1100
-    setTimeout(()=>{
-      elapsedSecs = controller.getElapsedTimeInSec(projectID, task.ID)
-      expect(task.Status).toBe(TaskStatus.COMPLETED)
-      expect(elapsedSecs === null).toBe(false)
-      expect(elapsedSecs).toBe(task.DurationMs/1000)
-    }, timeoutScheduleMs)
+    await new Promise(resolve => {
+      timeoutScheduleMs = 200
+      setTimeout(()=>{
+        elapsedSecs = controller.getElapsedTimeInSec(projectID, task.ID)
+        expect(getTaskStatus(projectID, task.ID)).toBe(TaskStatus.COMPLETED)
+        expect(elapsedSecs === null).toBe(false)
+        elapsedSecs !== null && expect(elapsedSecs).toBe(task.DurationMs/1000)
+        resolve()
+      }, timeoutScheduleMs)
+    })
   })
-  test('Task Restarts countdown', ()=>{
+
+  test('Task Restarts countdown', async()=>{
     let timeoutScheduleMs: number
     let elapsedSecs: number|null
 
-    timeoutScheduleMs = 1200
-    setTimeout(()=>{
-      expect(task.Status).toBe(TaskStatus.COMPLETED)
-      elapsedSecs = controller.getElapsedTimeInSec(projectID, task.ID)
-      expect(elapsedSecs === null).toBe(false)
-      expect(elapsedSecs).toBe(task.DurationMs/1000)
 
-      controller.restart(projectID, task.ID)
-      
-      expect(task.Status).toBe(TaskStatus.EXECUTING)
-      elapsedSecs = controller.getElapsedTimeInSec(projectID, task.ID)
-      expect(elapsedSecs === null).toBe(false)
-      expect(elapsedSecs).toBeGreaterThan(task.DurationMs - 1/1000)
-      expect(elapsedSecs).toBeLessThan(task.DurationMs + 1/1000)
-    }, timeoutScheduleMs)
+    await new Promise(resolve => {
+      timeoutScheduleMs = 200
+      setTimeout(()=>{
+        expect(getTaskStatus(projectID, task.ID)).toBe(TaskStatus.COMPLETED)
+        elapsedSecs = controller.getElapsedTimeInSec(projectID, task.ID)
+        expect(elapsedSecs === null).toBe(false)
+        elapsedSecs !== null && expect(elapsedSecs).toBe(task.DurationMs/1000)
 
-    timeoutScheduleMs = 1300
-    setTimeout(()=>{
-      expect(task.Status).toBe(TaskStatus.EXECUTING)
-      elapsedSecs = controller.getElapsedTimeInSec(projectID, task.ID)
-      expect(elapsedSecs === null).toBe(false)
-      expect(elapsedSecs).toBeGreaterThan(task.DurationMs - 100 - 1/1000)
-      expect(elapsedSecs).toBeLessThan(task.DurationMs -100 + 1/1000)
-    }, timeoutScheduleMs)
+        controller.reset(projectID, task.ID)
+        expect(getTaskStatus(projectID, task.ID)).toBe(TaskStatus.SCHEDULED)
+        elapsedSecs !== null && expect(elapsedSecs).toBe(task.DurationMs/1000)
+
+        controller.start(projectID, task.ID)
+        expect(getTaskStatus(projectID, task.ID)).toBe(TaskStatus.EXECUTING)
+        resolve()
+      }, timeoutScheduleMs)
+    })
+
+    await new Promise(resolve => {
+      timeoutScheduleMs = 200
+      setTimeout(()=>{
+        let elapsedTime = controller.getElapsedTimeInSec(projectID, task.ID)
+        expect(getTaskStatus(projectID, task.ID)).toBe(TaskStatus.EXECUTING)
+        expect(elapsedTime).toBeGreaterThan((task.DurationMs - 1*timeoutScheduleMs - 100)/1000)
+        expect(elapsedTime).toBeLessThan((task.DurationMs - 1*timeoutScheduleMs + 100)/1000)
+        resolve()
+      }, timeoutScheduleMs)
+    })
 
   })
 })

@@ -135,6 +135,7 @@ const Main: React.FC = () => {
 		let currentTask = null
 		projectID !== null && taskID !== null && (currentTask = getTaskByIndex(projectID, taskID));
 		setIsRunning(true)
+		console.log(TTimerActions[action], projectID, taskID, currentTask === null ? null : TaskStatus[currentTask.Status])
 
 		switch(action){
 
@@ -265,7 +266,7 @@ const Main: React.FC = () => {
 										onChangedName={(taskID, newName)=>selectedProjectID !== null && updateTask(selectedProjectID, taskID, {'Name': newName})}
 										onChangedDuration={(taskID, newDuration)=>selectedProjectID !== null && updateTask(selectedProjectID, taskID, {'DurationMs': newDuration})}
 										onCreate={(newTask) => handleNewTask(newTask)}
-										getElapsedTime={(taskID)=>{console.log('Getting Elapsed Time on Task with ID ', taskID); return '11:02:62'}}
+										getElapsedTime={(taskID)=> timerController.getElapsedTimeInSec(selectedProjectID, taskID)}
 										getDuration={(taskID)=>{console.log('Getting Duration of Task with ID ', taskID); return {hours: 11, minutes: 52, seconds: 24}}}/>
 			)}
 

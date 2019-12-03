@@ -33,8 +33,8 @@ const getTasks = (owningProjectID: number): UITask[] => {
 }
 
 
-const getElapsedTime = (owningProjectID: number, taskID: number): string => {
-  return `${Math.floor(Math.random()*10)}:${Math.floor(Math.random()*60)}:${Math.floor(Math.random()*60)}`
+const formatElapsedTime = (elapsedTimeSec: number|null): string => {
+  return elapsedTimeSec === null ? '00:00' : convertTimeObjectToString(convertMsToTimeObject(elapsedTimeSec*1000))
 }
 
 
@@ -65,4 +65,4 @@ const padTimeField = (timeField: string, width: number = 2):string => timeField.
 const convertTimeObjectToString = ({hours, minutes, seconds}: TimeObject) => {
   return `${hours<0?'-':' '} ${padTimeField(Math.abs(hours)+'')}:${padTimeField(Math.floor(minutes)+'')}:${padTimeField(Math.floor(seconds)+'')}`
 }
-export { getTasks, getElapsedTime, convertMsToTimeObject, convertTimeObjectToString }
+export { getTasks, formatElapsedTime, convertMsToTimeObject, convertTimeObjectToString }
