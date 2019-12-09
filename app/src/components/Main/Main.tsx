@@ -20,6 +20,8 @@ import TimerController from '../TimerElements/TimerController';
 import TimerControls from '../TimerElements/TimerControls';
 import ProjectPage from '../Projects/ProjectPage';
 import TaskPage from '../Tasks/TaskPage';
+import TimerRange from '../TimerElements/TimerRange';
+import Controller from '../TimerElements/TimerController';
 
 
 
@@ -125,6 +127,8 @@ const Main: React.FC = () => {
 	
 
 
+	const [timerRangeVal, setTimerRangeVal] = useState<number>(0)
+
 
 
 
@@ -208,7 +212,7 @@ const Main: React.FC = () => {
 	const handleNewTask = (newTask: string) => {
 		selectedProjectID !== null && setSelectedTaskID(addTask(selectedProjectID, typedTask))
 	}
-
+	
 	return (
 		<div onMouseLeave={evt => setMouseLeftAppMoment(new Date().getTime())} onMouseEnter={evt => setMouseLeftAppMoment(null)}>
 			<div className="Main">
@@ -228,8 +232,12 @@ const Main: React.FC = () => {
 								 onChange={evt => setTypedTask(evt.target.value)}
 								 onKeyDown={evt => evt.keyCode === 13 && handleNewTask(typedTask)}
 								 onMouseDown={evt => setOpenedPane(TOpenedPane.TASK)}/>
-					<div className="timer-slider-bg"></div>
-					<div className="timer-slider"></div>
+					<div className="timer-range">
+						<TimerRange value={elapsedTime === null || selectedProjectID === null || selectedTaskID === null
+															? 0 
+															: 100 - elapsedTime*100000/getTaskByIndex(selectedProjectID, selectedTaskID).DurationMs} 
+												setValue={setTimerRangeVal}/>
+					</div>
 				</div>
 
 				<div className="timer-display">

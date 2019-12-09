@@ -1,0 +1,145 @@
+/* Taken from https://codepen.io/thebabydino/pen/goYYrN and  https://codepen.io/zFunx/pen/XevMzL?editors=0100*/
+
+.timer-range-container input[type="range"] {
+    position: relative;
+}
+
+.timer-range-container input[type="range"] {
+    --thumbWidth: .9em;
+    --range: calc(var(--max) - var(--min));
+    --ratio: calc((var(--val) - var(--min))/var(--range));
+    --sx: calc(0.5*var(--thumbWidth) + var(--ratio)*(100% - var(--thumbWidth)));
+    --active-color: linear-gradient(#95a, #95a);
+    --inactive-color: rgba(0, 0, 0, 0.2);
+    --track-Height: 0.2em;
+    margin: 0;
+    border: none;
+    padding: 0;
+    width: 100%;
+    height: var(--thumbWidth);
+    background: transparent;
+    font: 1em arial, sans-serif;
+    -webkit-appearance: none;
+    outline: none;
+    position: absolute;
+    top: calc(-0.5 * var(--thumbWidth));
+}
+
+.timer-range-container input[type="range"]::-webkit-slider-runnable-track {
+    box-sizing: border-box;
+    border: none;
+    width: 100%;
+    height: var(--track-Height);
+    background: var(--inactive-color);
+    background: var(--active-color) 0/ var(--sx) 100% no-repeat var(--inactive-color);
+    border-radius: 10px;
+    /* transition: 0.3s; */
+}
+
+.timer-range-container input[type="range"].at-zero::-webkit-slider-runnable-track {
+    background: var(--inactive-color);
+}
+
+.timer-range-container input[type="range"]:hover::-webkit-slider-runnable-track,
+.timer-range-container input[type="range"]:focus::-webkit-slider-runnable-track {
+    background: var(--active-color) 0/ var(--sx) 100% no-repeat var(--inactive-color);
+    /* transition: 0.3s; */
+}
+
+.timer-range-container input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    /* margin-top: -0.625em; */
+    margin-top: calc(-0.5 * (var(--thumbWidth) - var(--track-Height)));
+    box-sizing: border-box;
+    border: none;
+    width: var(--thumbWidth);
+    height: var(--thumbWidth);
+    border-radius: 50%;
+    background: transparent;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.timer-range-container input[type="range"]:hover::-webkit-slider-thumb,
+.timer-range-container input[type="range"]:focus::-webkit-slider-thumb {
+    background: var(--active-color);
+    transition: 0.3s;
+}
+
+
+/*Firefox*/
+
+
+/* .timer-range-container input[type="range"]::-moz-focus-outer {
+    border: 0;
+}
+
+.timer-range-container input[type="range"]::-moz-range-thumb {
+    box-sizing: border-box;
+    border: none;
+    width: var(--thumbWidth);
+    height: var(--thumbWidth);
+    border-radius: 50%;
+    background: #f90;
+    cursor: pointer;
+}
+
+.timer-range-container input[type="range"]:hover::-moz-range-thumb,
+.timer-range-container input[type="range"]:focus::-moz-range-thumb {
+    background: darkOrange;
+}
+
+.timer-range-container input[type="range"]::-moz-range-track {
+    box-sizing: border-box;
+    border: none;
+    width: 12.5em;
+    height: 0.25em;
+    background: #ccc;
+}
+
+.timer-range-container input[type="range"]:hover::-moz-range-track,
+.timer-range-container input[type="range"]:focus::-moz-range-track {
+    background: #777;
+}
+
+.timer-range-container input[type="range"]::-moz-range-progress {
+    height: 0.25em;
+    background: #95a;
+    border-radius: 10px;
+}
+
+.timer-range-container input[type="range"]:hover::-moz-range-progress,
+.timer-range-container input[type="range"]:focus::-moz-range-progress {
+    background: darkOrange;
+} */
+
+
+/*Microsoft Explorer*/
+
+
+/* .timer-range-container input[type="range"]::-ms-track {
+    box-sizing: border-box;
+    border: none;
+    width: 12.5em;
+    height: 0.25em;
+    background: #ccc;
+}
+
+.timer-range-container input[type="range"]::-ms-fill-lower {
+    height: 0.25em;
+    background: #95a;
+}
+
+.timer-range-container input[type="range"]::-ms-thumb {
+    margin-top: 0;
+    box-sizing: border-box;
+    border: none;
+    width: var(--thumbWidth);
+    height: var(--thumbWidth);
+    border-radius: 50%;
+    background: #f90;
+}
+
+.timer-range-container input[type="range"]::-ms-tooltip {
+    display: none;
+} */
