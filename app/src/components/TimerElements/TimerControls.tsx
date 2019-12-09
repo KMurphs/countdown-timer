@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import './TimerElements.css';
 import { TTimerActions } from '../Main/Main';
 

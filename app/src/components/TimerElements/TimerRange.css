@@ -23,6 +23,7 @@
     outline: none;
     position: absolute;
     top: calc(-0.5 * var(--thumbWidth));
+    transition: var(--val) 0.3s;
 }
 
 .timer-range-container input[type="range"]::-webkit-slider-runnable-track {

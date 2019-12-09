@@ -27,6 +27,7 @@ const TimerRange: React.FC<TimerRangeProps> = ({value, setValue}) => {
       <input type="range" 
             min={min} 
             max={max}
+            step={0.01}
             style={timerRangeStyle} 
             className={`${value===0 ? 'at-zero' : ''}`}
             value={coercedValue} 

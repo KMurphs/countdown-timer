@@ -1,7 +1,7 @@
 import { getTasks, convertMsToTimeObject, convertTimeObjectToString } from "../Tasks/TasksController"
 import { getProjectByName, getTaskByIndex } from "../../controllers.common"
 import Controller from "../TimerElements/TimerController"
-import { Task, TaskStatus } from "../../model/model"
+import { TaskStatus } from "../../model/model"
 
 // import model from '../../model/model'
 // import { TProject } from '../../controllers.common'

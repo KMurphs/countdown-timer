@@ -103,6 +103,7 @@ describe('Common Controller Functions', ()=>{
     taskIDs.forEach((taskID, index) => {
       projectID !== null && expect(getNextValidTask(projectID, taskID)).toBe(taskIDs[index + 1 >= taskIDs.length - 1 ? 0 : index + 1])
     })
+    projectID !== null && expect(getNextValidTask(projectID, null)).toBe(taskIDs[0])
   })
   test('Can Get Previous Valid Task', ()=>{
     let taskIDs = tasks.sort((a,b)=>a.No-b.No).map(task => task.ID)
@@ -112,6 +113,7 @@ describe('Common Controller Functions', ()=>{
     taskIDs.forEach((taskID, index) => {
       projectID !== null && expect(getPreviousValidTask(projectID, taskID)).toBe(taskIDs[index - 1 < 0 ? taskIDs.length - 2 : index - 1])
     })
+    projectID !== null && expect(getPreviousValidTask(projectID, null)).toBe(taskIDs[0])
   })
 })
 

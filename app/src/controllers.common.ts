@@ -145,23 +145,34 @@ const updateTask = (owningProjectID: number, taskID: number, data:{[key:string]:
 
   return taskID
 }
+const convertKeyToProject = (key: string): TProject => {
+  const [_index, _name] = key.split('::')
+  return {
+    index: parseInt(_index),
+    name: _name, 
+    key: key
+  }
+}
 const getNextValidTask = (owningProjectID: number|null, currentTaskID: number|null): number|null => {
-  let owningProject
-  let nextTasks
+  let owningProject = null
+  let nextTasks: Task[] = []
   let nextTask = null
 
+
+  // Ensure we have valid project
+  owningProject = convertKeyToProject(Object.keys(model)[0])
+  owningProjectID !== null && getProjectByIndex(owningProjectID).index !== null && (owningProject = getProjectByIndex(owningProjectID));
+
+
+  // Sort task by ascending task Nos, and take task which can be run (i.e are not completed yet)
+  nextTasks = model[owningProject.key].sort((a,b) => a.No - b.No)
+                                      .filter(task => (task.Status !== TaskStatus.COMPLETED)||(task.ID===currentTaskID));
+  // Ensure we have valid task
+  nextTask = nextTasks[0].ID
+
+
   // Ensure we have valid project and task
-  if(owningProjectID !== null && currentTaskID !== null){
-
-    // Get owning project
-    owningProject = getProjectByIndex(owningProjectID);
-    if(owningProject.index === null){
-      return nextTask
-    }
-
-    // Sort task by ascending task Nos, and take task which can be run (i.e are not completed yet)
-    nextTasks = model[owningProject.key].sort((a,b) => a.No - b.No)
-                                        .filter(task => (task.Status !== TaskStatus.COMPLETED)||(task.ID===currentTaskID));
+  if(owningProjectID !== null && currentTaskID !== null && getProjectByIndex(owningProjectID).index !== null){
 
     // Search for current task index in the filtered results, 
     // and take next index as the index of the task that must be returned
@@ -177,22 +188,25 @@ const getNextValidTask = (owningProjectID: number|null, currentTaskID: number|nu
 }
 const getPreviousValidTask = (owningProjectID: number|null, currentTaskID: number|null): number|null => {
   let owningProject
-  let prevTasks
+  let prevTasks: Task[] = []
   let prevTask = null
 
+
+  // Ensure we have valid project
+  owningProject = convertKeyToProject(Object.keys(model)[0])
+  owningProjectID !== null && getProjectByIndex(owningProjectID).index !== null && (owningProject = getProjectByIndex(owningProjectID));
+  
+  
+  // Sort task by ascending task Nos, and take task which can be run (i.e are not completed yet)
+  prevTasks = model[owningProject.key].sort((a,b) => a.No - b.No)
+                                      .filter(task => (task.Status !== TaskStatus.COMPLETED)||(task.ID===currentTaskID));
+  // Ensure we have valid task
+  prevTask = prevTasks[0].ID
+
+
   // Ensure we have valid project and task
-  if(owningProjectID !== null && currentTaskID !== null){
+  if(owningProjectID !== null && currentTaskID !== null && getProjectByIndex(owningProjectID).index !== null){
 
-    // Get owning project
-    owningProject = getProjectByIndex(owningProjectID);
-    if(owningProject.index === null){
-      return prevTask
-    }
-
-    // Sort task by ascending task ids, and take task which can be run (i.e are not completed yet)
-    prevTasks = model[owningProject.key].sort((a,b) => a.No - b.No)
-                                        .filter(task => (task.Status !== TaskStatus.COMPLETED)||(task.ID===currentTaskID));
-                                        
     // Search for current task index in the filtered results, 
     // and take prev index as the index of the task that must be returned
     let prevTaskIdx = null;

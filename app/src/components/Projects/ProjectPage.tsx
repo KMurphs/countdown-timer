@@ -19,7 +19,7 @@ type ProjectPageProps = {
 	onCreate: (newProject: string)=>void,
 	getTotalTime: (thisProject: string)=>string,
 	getOvertime: (thisProject: string)=>number,
-	onTimerAction: (action: TTimerActions)=>void,
+	onTimerAction: (projectID: number, action: TTimerActions)=>void,
 }
 
 
@@ -64,14 +64,14 @@ const ProjectPage: React.FC<ProjectPageProps> = (props) => {
 
 				{
 					matchingProjects.map((project, index) => {
-						let projectIndex = project.index !== null ? project.index : -1
+						let projectIndex:number = project.index !== null ? project.index : -1
 						let projectOverTime = getOvertime(project.name)
 						let projectTotalTime = getTotalTime(project.name)
 						return (
 							<li className="project-item" key={projectIndex} onClick={evt => props.onSelection(projectIndex)}>
 								<div className="project-name">
 									<div className="timer-controls-container">
-										<TimerControls onTimerAction={props.onTimerAction} invisibleControls={[]} 																		
+										<TimerControls onTimerAction={(action) => props.onTimerAction(projectIndex, action)} invisibleControls={[]} 																		
 																	 isPlaying={ currentTask && projectIndex === props.selectedProjectID && currentTask.Status === TaskStatus.EXECUTING } />
 									</div>
 									<input type="text" placeholder="Your Awesome Project" 

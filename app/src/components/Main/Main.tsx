@@ -18,10 +18,11 @@ import TimerController from '../TimerElements/TimerController';
 
 
 import TimerControls from '../TimerElements/TimerControls';
+import TimerRange from '../TimerElements/TimerRange';
 import ProjectPage from '../Projects/ProjectPage';
 import TaskPage from '../Tasks/TaskPage';
-import TimerRange from '../TimerElements/TimerRange';
-import Controller from '../TimerElements/TimerController';
+
+
 
 
 
@@ -117,7 +118,7 @@ const Main: React.FC = () => {
 		// set up a new interval function that will update elapsedTime for ui consumption
 		const interval = setInterval(()=>{
 			setElapsedTime(timerController.getElapsedTimeInSec(selectedProjectID, selectedTaskID))
-		}, 250)
+		}, 100)
 
 		// cleanup function: clear the interval
 		return () => clearInterval(interval)
@@ -127,7 +128,7 @@ const Main: React.FC = () => {
 	
 
 
-	const [timerRangeVal, setTimerRangeVal] = useState<number>(0)
+	const [, setTimerRangeVal] = useState<number>(0)
 
 
 
@@ -235,7 +236,7 @@ const Main: React.FC = () => {
 					<div className="timer-range">
 						<TimerRange value={elapsedTime === null || selectedProjectID === null || selectedTaskID === null
 															? 0 
-															: 100 - elapsedTime*100000/getTaskByIndex(selectedProjectID, selectedTaskID).DurationMs} 
+															: elapsedTime*100000/getTaskByIndex(selectedProjectID, selectedTaskID).DurationMs} 
 												setValue={setTimerRangeVal}/>
 					</div>
 				</div>
@@ -263,7 +264,7 @@ const Main: React.FC = () => {
 					<ProjectPage onSelection={setSelectedProjectID} 
 											 selectedProjectID={selectedProjectID !== null ? selectedProjectID : -1} 
 											 selectedTaskID={selectedTaskID !== null ? selectedTaskID : -1} 
-											 onTimerAction={(action)=>handleTimerAction(selectedProjectID, selectedTaskID, action)}
+											 onTimerAction={(projectID, action)=>handleTimerAction(projectID, selectedTaskID, action)}
 											 onCreate={(newProject)=>addProject(newProject)}
 											 onRename={(projectID, newName) => updateProject(projectID, newName)}
 											 getTotalTime={project => {console.log('Obtaining total time for project ', project); return '11:52:12'}}
